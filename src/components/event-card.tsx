@@ -4,7 +4,6 @@ import Image from "next/image";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -20,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import React from "react";
 
 type EventCardProps = {
   event: Event;
@@ -29,7 +29,18 @@ type EventCardProps = {
 };
 
 export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCardProps) {
-  const eventDate = new Date(event.event_date);
+  const [formattedDate, setFormattedDate] = React.useState("");
+
+  React.useEffect(() => {
+    const eventDate = new Date(event.event_date);
+    setFormattedDate(eventDate.toLocaleDateString("en-IN", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }));
+  }, [event.event_date]);
+
 
   const cardContent = (
     <>
@@ -57,14 +68,13 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
         <CardContent className="p-0 flex-grow">
           <div className="flex items-center text-sm text-muted-foreground mb-2">
             <Calendar className="mr-2 h-4 w-4" />
-            <span>
-              {eventDate.toLocaleDateString("en-IN", {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
+            {formattedDate ? (
+              <span>
+                {formattedDate}
+              </span>
+            ) : (
+              <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+            )}
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <MapPin className="mr-2 h-4 w-4" />
