@@ -1,6 +1,7 @@
 import { Logo } from '@/components/logo';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { ThemeToggle } from '../theme-toggle';
 
 export function Header() {
   return (
@@ -16,6 +17,7 @@ export function Header() {
               aria-label="Search events"
             />
           </div>
+          <ThemeToggle />
         </div>
       </div>
     </header>
