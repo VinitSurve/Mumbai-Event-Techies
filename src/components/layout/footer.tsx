@@ -31,7 +31,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Mumbai Event Echo. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} मुंबई Event Techies. All rights reserved.</p>
         </div>
       </div>
     </footer>

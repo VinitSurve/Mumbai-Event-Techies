@@ -8,7 +8,7 @@ export function Logo() {
         <Layers className="h-6 w-6" />
       </div>
       <span className="hidden sm:inline-block font-headline text-xl font-bold text-foreground">
-        Mumbai Event Echo
+        मुंबई Event Techies
       </span>
     </Link>
   );

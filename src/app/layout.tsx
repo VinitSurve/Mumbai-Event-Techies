@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: 'Mumbai Event Echo',
+  title: 'मुंबई Event Techies',
   description: "Your live feed for Mumbai's tech events, powered by the community.",
 };
 
