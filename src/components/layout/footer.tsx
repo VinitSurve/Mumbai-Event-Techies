@@ -30,8 +30,9 @@ export function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} मुंबई Event Techies. All rights reserved.</p>
+        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground flex justify-between">
+          <p>&copy; {new Date().getFullYear()} Mumbai Event Echo. All rights reserved.</p>
+          <p>Admin: Aman & Riya</p>
         </div>
       </div>
     </footer>

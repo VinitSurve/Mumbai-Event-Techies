@@ -58,6 +58,10 @@ export default function Home() {
               Your live feed for Mumbai's tech events, sourced directly from
               the heart of the community.
             </p>
+             <div className="mt-8 flex justify-center gap-4">
+              <Button size="lg">Explore Events</Button>
+              <Button size="lg" variant="outline">About Us</Button>
+            </div>
           </div>
         </section>
 
@@ -75,10 +79,10 @@ export default function Home() {
                   Upcoming Events
                 </h2>
                 <div className="hidden md:flex items-center gap-2">
-                  <Button variant={view === 'grid' ? 'default' : 'outline'} size="icon" onClick={() => setView('grid')}>
+                  <Button variant={view === 'grid' ? 'secondary' : 'ghost'} size="icon" onClick={() => setView('grid')}>
                     <LayoutGrid className="h-4 w-4" />
                   </Button>
-                  <Button variant={view === 'list' ? 'default' : 'outline'} size="icon" onClick={() => setView('list')}>
+                  <Button variant={view === 'list' ? 'secondary' : 'ghost'} size="icon" onClick={() => setView('list')}>
                     <List className="h-4 w-4" />
                   </Button>
                 </div>
