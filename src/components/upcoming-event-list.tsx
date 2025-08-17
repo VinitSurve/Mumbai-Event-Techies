@@ -7,6 +7,7 @@ import type { Event } from "@/lib/types";
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Calendar } from 'lucide-react';
+import Link from 'next/link';
 
 interface UpcomingEventListProps {
     events: Event[];
@@ -39,21 +40,23 @@ export function UpcomingEventList({ events }: UpcomingEventListProps) {
     return (
         <div className="space-y-4">
             {upcomingEvents.map(event => (
-                <Card key={event.id} className="p-4 flex items-center justify-between hover:shadow-md transition-shadow duration-200">
-                    <div className="flex items-center gap-4">
-                        <div className="bg-primary/10 text-primary p-3 rounded-lg">
-                           <Calendar className="h-6 w-6" />
+                 <Link href={`/events/${event.id}`} key={event.id}>
+                    <Card className="p-4 flex items-center justify-between hover:shadow-md transition-shadow duration-200">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-primary/10 text-primary p-3 rounded-lg">
+                               <Calendar className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-base">{event.title}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    {formatEventDate(event.event_date)}
+                                </p>
+                                 <p className="text-sm text-muted-foreground">{event.location}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 className="font-bold text-base">{event.title}</h3>
-                            <p className="text-sm text-muted-foreground">
-                                {formatEventDate(event.event_date)}
-                            </p>
-                             <p className="text-sm text-muted-foreground">{event.location}</p>
-                        </div>
-                    </div>
-                    <Button variant="outline" size="sm">View</Button>
-                </Card>
+                        <Button variant="outline" size="sm">View</Button>
+                    </Card>
+                </Link>
             ))}
         </div>
     );

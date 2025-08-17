@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -42,39 +43,41 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
   }, [event.event_date]);
 
   const GridView = () => (
-     <Card className="group transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 overflow-hidden p-4 border rounded-2xl h-full flex flex-col">
-       <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-lg group">
-        <Image
-          src={event.image_url || "https://placehold.co/600x400.png"}
-          alt={event.title}
-          fill
-          className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-          data-ai-hint="tech conference"
-        />
-        <Badge variant="secondary" className="absolute top-2 left-2 bg-background/80 backdrop-blur-sm">{event.category}</Badge>
-        <Badge variant={event.status === 'upcoming' ? 'default' : 'secondary'} className="absolute top-2 right-2">{event.status}</Badge>
-      </div>
-      <div className="flex flex-col flex-grow">
-        <CardTitle className="text-lg font-bold font-headline mb-2 group-hover:text-primary transition-colors">
-            {event.title}
-        </CardTitle>
-        <CardContent className="p-0 flex-grow text-sm text-muted-foreground space-y-2">
-          <div className="flex items-center">
-            <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
-            <span>{formattedDate || <span className="h-4 bg-muted rounded w-32 animate-pulse" />}</span>
+     <Link href={`/events/${event.id}`} className="block h-full">
+         <Card className="group transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 overflow-hidden p-4 border rounded-2xl h-full flex flex-col">
+           <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-lg group">
+            <Image
+              src={event.image_url || "https://placehold.co/600x400.png"}
+              alt={event.title}
+              fill
+              className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+              data-ai-hint="tech conference"
+            />
+            <Badge variant="secondary" className="absolute top-2 left-2 bg-background/80 backdrop-blur-sm">{event.category}</Badge>
+            <Badge variant={event.status === 'upcoming' ? 'default' : 'secondary'} className="absolute top-2 right-2">{event.status}</Badge>
           </div>
-          <div className="flex items-center">
-            <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
-            <span>{event.location || "Location TBD"}</span>
+          <div className="flex flex-col flex-grow">
+            <CardTitle className="text-lg font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                {event.title}
+            </CardTitle>
+            <CardContent className="p-0 flex-grow text-sm text-muted-foreground space-y-2">
+              <div className="flex items-center">
+                <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span>{formattedDate || <span className="h-4 bg-muted rounded w-32 animate-pulse" />}</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span>{event.location || "Location TBD"}</span>
+              </div>
+            </CardContent>
+            <CardFooter className="p-0 mt-4 flex justify-between items-center">
+              <Button variant="default" size="sm" className="bg-accent hover:bg-accent/90 w-full">
+                Register
+              </Button>
+            </CardFooter>
           </div>
-        </CardContent>
-        <CardFooter className="p-0 mt-4 flex justify-between items-center">
-          <Button variant="default" size="sm" className="bg-accent hover:bg-accent/90 w-full">
-            Register
-          </Button>
-        </CardFooter>
-      </div>
-    </Card>
+        </Card>
+    </Link>
   )
 
   const ListView = () => (
@@ -93,7 +96,9 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
             <div>
                 <Badge variant="secondary" className="mb-2">{event.category}</Badge>
                 <CardTitle className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                   <Link href={`/events/${event.id}`}>
                     {event.title}
+                  </Link>
                 </CardTitle>
                 <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                     {event.description}
@@ -114,7 +119,7 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
                 </div>
             </div>
             <div className="flex justify-between items-center mt-4">
-                 <Link href="#" className="text-sm font-medium text-primary hover:underline">
+                 <Link href={`/events/${event.id}`} className="text-sm font-medium text-primary hover:underline">
                     View Details
                 </Link>
                 <Button size="sm" className="bg-accent hover:bg-accent/90">

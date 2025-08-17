@@ -1,3 +1,4 @@
+
 // src/components/event-popover.tsx
 "use client";
 
@@ -7,6 +8,7 @@ import { Button } from './ui/button';
 import { Calendar, MapPin, ExternalLink, Clock } from 'lucide-react';
 import { Badge } from './ui/badge';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface EventPopoverProps {
     event: Event;
@@ -45,7 +47,9 @@ export function EventPopover({ event }: EventPopoverProps) {
                  <Badge variant="secondary" className="absolute top-2 left-2 bg-background/80 backdrop-blur-sm">{event.category}</Badge>
             </div>
             <div>
-                <h3 className="font-bold text-lg">{event.title}</h3>
+                 <Link href={`/events/${event.id}`}>
+                    <h3 className="font-bold text-lg hover:text-primary transition-colors">{event.title}</h3>
+                </Link>
                 <p className="text-sm text-muted-foreground mt-1 line-clamp-3">{event.description}</p>
             </div>
             <div className="space-y-2 text-sm">
@@ -62,10 +66,10 @@ export function EventPopover({ event }: EventPopoverProps) {
                     <span>{event.location || "Location TBD"}</span>
                 </div>
             </div>
-            <Button size="sm" className="w-full bg-accent hover:bg-accent/90" asChild>
-                <a href={event.urls?.[0]} target="_blank" rel="noopener noreferrer">
-                    Register <ExternalLink className="ml-2 h-4 w-4"/>
-                </a>
+             <Button size="sm" className="w-full" asChild>
+                <Link href={`/events/${event.id}`}>
+                    View Details
+                </Link>
             </Button>
         </div>
     )
