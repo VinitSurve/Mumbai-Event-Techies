@@ -125,7 +125,6 @@ export default async function EventDetailPage({ params }: { params: { id: string
                                     event={event}
                                     view="grid"
                                     isFavorite={false}
-                                    onToggleFavorite={() => {}}
                                 />
                             ))}
                         </div>

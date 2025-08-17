@@ -21,7 +21,7 @@ type EventCardProps = {
   event: Event;
   view: "grid" | "list";
   isFavorite: boolean;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite?: (id: string) => void;
 };
 
 export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCardProps) {
