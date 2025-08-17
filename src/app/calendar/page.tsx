@@ -3,7 +3,7 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import { addDays, format, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { mockEvents } from "@/lib/data";
 import { Header } from "@/components/layout/header";
@@ -17,6 +17,12 @@ import { UpcomingEventList } from "@/components/upcoming-event-list";
 export default function CalendarPage() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
 
   const eventsByDate = React.useMemo(() => {
     const map = new Map<string, Event[]>();
@@ -43,6 +49,10 @@ export default function CalendarPage() {
     setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -63,7 +73,7 @@ export default function CalendarPage() {
                   const dayEvents = eventsByDate.get(dateKey);
                   return (
                     <div className="relative h-full w-full">
-                      <time dateTime={date.toISOString()} className="absolute top-1 left-1.5 text-xs">{format(date, 'd')}</time>
+                      <time dateTime={startOfDay(date).toISOString()} className="absolute top-1 left-1.5 text-xs">{format(date, 'd')}</time>
                       {dayEvents && (
                         <div className="absolute top-7 left-0 right-0 flex flex-col items-center gap-1 px-1">
                           {dayEvents.slice(0, 2).map(event => (
