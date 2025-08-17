@@ -1,3 +1,4 @@
+
 import { Logo } from "@/components/logo";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -17,8 +18,8 @@ export function Footer() {
               Connecting the Mumbai tech community through automated WhatsApp event updates.
             </p>
             <div className="flex space-x-4 mt-4">
-              <a href="#" className="hover:text-primary"><Github size={20}/></a>
               <a href="#" className="hover:text-primary"><Twitter size={20}/></a>
+              <a href="#" className="hover:text-primary"><Github size={20}/></a>
               <a href="#" className="hover:text-primary"><Linkedin size={20}/></a>
             </div>
           </div>
@@ -28,7 +29,7 @@ export function Footer() {
               <ul className="space-y-2 text-sm">
                   <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
                   <li><Link href="/events" className="hover:text-primary transition-colors">Events</Link></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Calendar</a></li>
+                  <li><Link href="/calendar" className="hover:text-primary transition-colors">Calendar</Link></li>
                   <li><a href="#" className="hover:text-primary transition-colors">About</a></li>
                   <li><a href="#" className="hover:text-primary transition-colors">Subscribe</a></li>
               </ul>
@@ -47,7 +48,7 @@ export function Footer() {
                 <h3 className="font-bold text-white mb-4">Contact Us</h3>
                  <ul className="space-y-2 text-sm">
                   <li className="flex items-center"><Mail size={16} className="mr-2"/> contact@mumbaieventechies.com</li>
-                  <li className="flex items-center"><Phone size={16} className="mr-2"/> +91 98XXX XXXXX</li>
+                  <li className="flex items-center"><Phone size={16} className="mr-2"/> +91 98765 43210</li>
                   <li className="flex items-center"><MapPin size={16} className="mr-2"/> Mumbai, India</li>
                 </ul>
             </div>

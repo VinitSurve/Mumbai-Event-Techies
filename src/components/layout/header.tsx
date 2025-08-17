@@ -1,3 +1,4 @@
+
 import { Logo } from '@/components/logo';
 import { Button } from '../ui/button';
 import { Menu, Search } from 'lucide-react';
@@ -11,8 +12,9 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between">
         <Logo />
         <nav className="hidden md:flex items-center gap-6 text-sm">
+            <Link href="/" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Home</Link>
             <Link href="/events" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Events</Link>
-            <a href="#" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Calendar</a>
+            <Link href="/calendar" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Calendar</Link>
             <a href="#" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">About</a>
             <a href="#" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Subscribe</a>
         </nav>
