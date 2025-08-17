@@ -1,7 +1,4 @@
-
 // src/app/events/[id]/page.tsx
-"use client";
-
 import * as React from "react";
 import { mockEvents } from "@/lib/data";
 import type { Event } from "@/lib/types";
@@ -11,68 +8,35 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Calendar, Clock, MapPin, Share2, Users, Star } from "lucide-react";
+import { Calendar, Clock, MapPin, Share2, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { EventCard } from "@/components/event-card";
 
-export default function EventDetailPage({ params }: { params: { id: string } }) {
-    const { id } = params;
-    const [event, setEvent] = React.useState<Event | undefined>(undefined);
-    const [formattedDate, setFormattedDate] = React.useState("");
-    const [formattedTime, setFormattedTime] = React.useState("");
+// Note: This is now an async Server Component
+export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    
+    const event = mockEvents.find((e) => e.id === id);
 
-    React.useEffect(() => {
-        const foundEvent = mockEvents.find((e) => e.id === id);
-        if (foundEvent) {
-            setEvent(foundEvent);
-            const eventDate = new Date(foundEvent.event_date);
-            setFormattedDate(eventDate.toLocaleDateString("en-US", {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-            }));
-            setFormattedTime(eventDate.toLocaleTimeString("en-US", {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            }));
-        }
-    }, [id]);
+    if (!event) {
+        notFound();
+    }
 
     const otherEvents = mockEvents.filter(e => e.id !== id).slice(0, 3);
 
-    if (!event) {
-        // You can return a loading skeleton here
-        return (
-            <div className="flex flex-col min-h-screen bg-background">
-                <Header />
-                <main className="flex-1 mt-16 container py-12 md:py-20">
-                    <div className="animate-pulse">
-                        <div className="h-64 bg-muted rounded-2xl w-full"></div>
-                        <div className="h-8 bg-muted rounded w-3/4 mt-8"></div>
-                        <div className="h-4 bg-muted rounded w-1/2 mt-4"></div>
-                        <div className="mt-8 grid md:grid-cols-3 gap-8">
-                            <div className="md:col-span-2 space-y-4">
-                                <div className="h-32 bg-muted rounded-lg"></div>
-                                <div className="h-48 bg-muted rounded-lg"></div>
-                            </div>
-                            <div className="space-y-4">
-                                <div className="h-48 bg-muted rounded-lg"></div>
-                            </div>
-                        </div>
-                    </div>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
-    
-    // Once event is loaded
-    if (!event.id) {
-        notFound();
-    }
+    const eventDate = new Date(event.event_date);
+    const formattedDate = eventDate.toLocaleDateString("en-US", {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+    });
+    const formattedTime = eventDate.toLocaleTimeString("en-US", {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
 
     return (
         <div className="flex flex-col min-h-screen bg-secondary/30">
