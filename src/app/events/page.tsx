@@ -1,3 +1,4 @@
+
 // src/app/events/page.tsx
 "use client";
 

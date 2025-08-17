@@ -14,8 +14,8 @@ import Link from "next/link";
 import { EventCard } from "@/components/event-card";
 
 // Note: This is now an async Server Component
-export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function EventDetailPage({ params }: { params: { id: string } }) {
+    const { id } = params;
     
     const event = mockEvents.find((e) => e.id === id);
 
