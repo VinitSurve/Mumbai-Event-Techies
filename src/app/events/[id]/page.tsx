@@ -17,13 +17,10 @@ import Link from "next/link";
 import { EventCard } from "@/components/event-card";
 
 export default function EventDetailPage({ params }: { params: { id: string } }) {
+    const { id } = params;
     const [event, setEvent] = React.useState<Event | undefined>(undefined);
     const [formattedDate, setFormattedDate] = React.useState("");
     const [formattedTime, setFormattedTime] = React.useState("");
-    
-    // The 'params' object is now a Promise. We can't access it directly in a useEffect.
-    // We'll get the id from the params object and use it in the useEffect dependency array.
-    const { id } = params;
 
     React.useEffect(() => {
         const foundEvent = mockEvents.find((e) => e.id === id);
