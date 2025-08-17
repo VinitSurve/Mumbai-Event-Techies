@@ -11,6 +11,7 @@ import { Hero } from "@/components/hero";
 import { EventCategories } from "@/components/event-categories";
 import { HowItWorks } from "@/components/how-it-works";
 import { Cta } from "@/components/cta";
+import Link from "next/link";
 
 export default function Home() {
   const [favorites, setFavorites] = useLocalStorage<string[]>("favoriteEvents", []);
@@ -33,7 +34,11 @@ export default function Home() {
           <div className="container">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold font-headline">Featured Events</h2>
-              <Button variant="link" className="text-primary">View All &rarr;</Button>
+              <Button asChild variant="link" className="text-primary">
+                <Link href="/events">
+                  View All &rarr;
+                </Link>
+              </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {mockEvents.slice(0, 3).map((event) => (
