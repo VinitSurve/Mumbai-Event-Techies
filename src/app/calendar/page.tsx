@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import type { Event } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { UpcomingEventList } from "@/components/upcoming-event-list";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { EventPopover } from "@/components/event-popover";
 
 export default function CalendarPage() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -28,7 +30,7 @@ export default function CalendarPage() {
     const map = new Map<string, Event[]>();
     mockEvents.forEach((event) => {
       const eventDate = new Date(event.event_date);
-      const dateKey = format(eventDate, "yyyy-MM-dd");
+      const dateKey = format(startOfDay(eventDate), "yyyy-MM-dd");
       if (!map.has(dateKey)) {
         map.set(dateKey, []);
       }
@@ -69,7 +71,7 @@ export default function CalendarPage() {
               className="w-full"
               components={{
                 DayContent: ({ date }) => {
-                  const dateKey = format(date, "yyyy-MM-dd");
+                  const dateKey = format(startOfDay(date), "yyyy-MM-dd");
                   const dayEvents = eventsByDate.get(dateKey);
                   return (
                     <div className="relative h-full w-full">
@@ -77,9 +79,16 @@ export default function CalendarPage() {
                       {dayEvents && (
                         <div className="absolute top-7 left-0 right-0 flex flex-col items-center gap-1 px-1">
                           {dayEvents.slice(0, 2).map(event => (
-                            <Badge key={event.id} variant="default" className="w-full text-xs truncate justify-start p-1 bg-primary/20 text-primary hover:bg-primary/30">
-                              {event.title}
-                            </Badge>
+                            <Popover key={event.id}>
+                              <PopoverTrigger asChild>
+                                 <Badge variant="default" className="w-full text-xs truncate justify-start p-1 bg-primary/20 text-primary hover:bg-primary/30 cursor-pointer">
+                                  {event.title}
+                                </Badge>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80">
+                                <EventPopover event={event} />
+                              </PopoverContent>
+                            </Popover>
                           ))}
                         </div>
                       )}
