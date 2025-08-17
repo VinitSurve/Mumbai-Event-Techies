@@ -92,8 +92,8 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
         <CardFooter className="p-0 mt-4 flex justify-between items-center">
           <div className="flex items-center">
             <div className="flex -space-x-2 mr-2">
-                <Image className="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://placehold.co/32x32.png" alt="User"/>
-                <Image className="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://placehold.co/32x32.png" alt="User"/>
+                <Image className="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://placehold.co/32x32.png" alt="User" width={24} height={24} />
+                <Image className="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://placehold.co/32x32.png" alt="User" width={24} height={24} />
             </div>
             <span className="text-xs text-muted-foreground">+54 going</span>
           </div>
