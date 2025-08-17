@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, ArrowRight, Star } from "lucide-react";
+import { Calendar, MapPin, Ticket, Users, Mic, Star } from "lucide-react";
 import type { Event } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
@@ -33,69 +33,34 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
 
   React.useEffect(() => {
     const eventDate = new Date(event.event_date);
-    setFormattedDate(eventDate.toLocaleDateString("en-IN", {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
+    setFormattedDate(eventDate.toLocaleDateString("en-US", {
+      month: "long",
       day: "numeric",
+      year: "numeric",
     }));
   }, [event.event_date]);
 
 
   const cardContent = (
     <>
-      <div className={cn("relative mb-4 aspect-video w-full overflow-hidden rounded-lg", view === 'list' && 'sm:w-48 sm:aspect-square sm:mb-0 sm:mr-6 flex-shrink-0')}>
+      <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-lg group">
         <Image
           src={event.image_url || "https://placehold.co/600x400.png"}
           alt={event.title}
-          layout="fill"
+          fill
           objectFit="cover"
           className="transition-transform duration-300 ease-in-out group-hover:scale-105"
-          data-ai-hint="tech event"
+          data-ai-hint="tech conference"
         />
-      </div>
-      <div className="flex flex-col flex-grow">
-        <CardHeader className="p-0 mb-3">
-          <div className="flex justify-between items-start">
-            <Badge variant="secondary" className="mb-2 capitalize">
-              {event.category}
-            </Badge>
-          </div>
-          <CardTitle className="text-lg font-headline group-hover:text-primary transition-colors">
-            {event.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 flex-grow">
-          <div className="flex items-center text-sm text-muted-foreground mb-2">
-            <Calendar className="mr-2 h-4 w-4" />
-            {formattedDate ? (
-              <span>
-                {formattedDate}
-              </span>
-            ) : (
-              <div className="h-4 bg-muted rounded w-32 animate-pulse" />
-            )}
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="mr-2 h-4 w-4" />
-            <span>{event.location || "Location TBD"}</span>
-          </div>
-        </CardContent>
-        <CardFooter className="p-0 mt-4 flex justify-between items-center">
-          <Button variant="default" size="sm" asChild>
-            <a
-              href={event.urls?.[0] || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Register <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
-          <TooltipProvider>
+        <div className="absolute top-2 right-2">
+          <Badge variant="secondary" className="bg-green-100 text-green-800">Sponsered</Badge>
+        </div>
+        <div className="absolute bottom-2 left-2 flex gap-2">
+           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={() => onToggleFavorite(event.id)}>
-                  <Star className={cn("h-5 w-5", isFavorite ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground")} />
+                <Button variant="ghost" size="icon" onClick={() => onToggleFavorite(event.id)} className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white">
+                  <Star className={cn("h-4 w-4", isFavorite ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground")} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -103,14 +68,46 @@ export function EventCard({ event, view, isFavorite, onToggleFavorite }: EventCa
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+        </div>
+      </div>
+      <div className="flex flex-col flex-grow">
+          <p className="text-sm text-primary font-semibold mb-1 capitalize">{event.category}</p>
+          <CardTitle className="text-lg font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+            {event.title}
+          </CardTitle>
+        <CardContent className="p-0 flex-grow text-sm text-muted-foreground space-y-2">
+          <div className="flex items-center">
+            <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span>{formattedDate || <span className="h-4 bg-muted rounded w-32 animate-pulse" />}</span>
+          </div>
+          <div className="flex items-center">
+            <MapPin className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span>{event.location || "Location TBD"}</span>
+          </div>
+          <div className="flex items-center">
+            <Ticket className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span>Free</span>
+          </div>
+        </CardContent>
+        <CardFooter className="p-0 mt-4 flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="flex -space-x-2 mr-2">
+                <Image className="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://placehold.co/32x32.png" alt="User"/>
+                <Image className="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="https://placehold.co/32x32.png" alt="User"/>
+            </div>
+            <span className="text-xs text-muted-foreground">+54 going</span>
+          </div>
+          <Button variant="default" size="sm" className="bg-accent hover:bg-accent/90">
+            Register
+          </Button>
         </CardFooter>
       </div>
     </>
   );
 
   return (
-    <Card className={cn("group transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 overflow-hidden", view === 'list' && 'flex flex-col sm:flex-row p-4')}>
-        {view === 'grid' ? <div className="p-4">{cardContent}</div> : cardContent}
+    <Card className="group transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 overflow-hidden p-4 border rounded-2xl">
+        {cardContent}
     </Card>
   );
 }

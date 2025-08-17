@@ -1,31 +1,20 @@
 import { Logo } from '@/components/logo';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import { ThemeToggle } from '../theme-toggle';
 import { Button } from '../ui/button';
+import { Menu } from 'lucide-react';
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
+    <header className="absolute top-0 z-50 w-full">
+      <div className="container flex h-20 items-center justify-between text-white">
         <Logo />
-        <div className="hidden md:flex items-center gap-6 ml-10">
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Events</a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Calendar</a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">About</a>
+        <div className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Events</a>
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">Categories</a>
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">About</a>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <div className="relative w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search events..."
-              className="pl-10"
-              aria-label="Search events"
-            />
-          </div>
-          <ThemeToggle />
-          <Button variant="outline">Submit Event</Button>
-        </div>
+        <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu />
+        </Button>
       </div>
     </header>
   );
