@@ -91,9 +91,12 @@ export default function CalendarPage() {
                 )
               }}
                classNames={{
-                head_row: "grid grid-cols-7",
-                head_cell: "text-muted-foreground font-normal text-sm capitalize w-full justify-start",
-                row: "grid grid-cols-7 mt-0",
+                months: "w-full",
+                month: "w-full",
+                table: "w-full border-collapse",
+                head_row: "grid grid-cols-7 w-full",
+                head_cell: "text-muted-foreground font-normal text-sm capitalize p-2 text-center",
+                row: "grid grid-cols-7 mt-0 w-full",
                 cell: "h-28 sm:h-32 text-left p-0 border-t border-l border-border first:border-l-0",
                 day: "w-full h-full rounded-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0",
                 day_today: "bg-accent/10 text-accent-foreground",
