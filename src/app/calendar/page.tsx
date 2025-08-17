@@ -73,7 +73,7 @@ export default function CalendarPage() {
                   const dayEvents = eventsByDate.get(dateKey);
                   return (
                     <div className="relative h-full w-full">
-                      <time dateTime={startOfDay(date).toISOString()} className="absolute top-1 left-1.5 text-xs">{format(date, 'd')}</time>
+                      <time dateTime={date.toISOString()} className="absolute top-1 left-1.5 text-xs">{format(date, 'd')}</time>
                       {dayEvents && (
                         <div className="absolute top-7 left-0 right-0 flex flex-col items-center gap-1 px-1">
                           {dayEvents.slice(0, 2).map(event => (
