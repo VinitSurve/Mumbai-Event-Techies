@@ -16,7 +16,7 @@ export function Header() {
             <Link href="/events" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Events</Link>
             <Link href="/calendar" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Calendar</Link>
             <Link href="/about" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">About</Link>
-            <a href="#" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Subscribe</a>
+            <Link href="/subscribe" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Subscribe</Link>
         </nav>
         <div className="flex items-center gap-4">
            <div className="relative hidden sm:block">
