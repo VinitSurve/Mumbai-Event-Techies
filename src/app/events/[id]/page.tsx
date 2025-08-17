@@ -20,9 +20,13 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
     const [event, setEvent] = React.useState<Event | undefined>(undefined);
     const [formattedDate, setFormattedDate] = React.useState("");
     const [formattedTime, setFormattedTime] = React.useState("");
+    
+    // The 'params' object is now a Promise. We can't access it directly in a useEffect.
+    // We'll get the id from the params object and use it in the useEffect dependency array.
+    const { id } = params;
 
     React.useEffect(() => {
-        const foundEvent = mockEvents.find((e) => e.id === params.id);
+        const foundEvent = mockEvents.find((e) => e.id === id);
         if (foundEvent) {
             setEvent(foundEvent);
             const eventDate = new Date(foundEvent.event_date);
@@ -38,9 +42,9 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                 hour12: true
             }));
         }
-    }, [params.id]);
+    }, [id]);
 
-    const otherEvents = mockEvents.filter(e => e.id !== params.id).slice(0, 3);
+    const otherEvents = mockEvents.filter(e => e.id !== id).slice(0, 3);
 
     if (!event) {
         // You can return a loading skeleton here
