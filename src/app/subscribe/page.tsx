@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bell, CheckCircle, Mail, Sparkles, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -38,10 +38,10 @@ const eventCategories = [
 ];
 
 const whySubscribeItems = [
-    { text: "Weekly dose of Mumbai's best tech events, right in your inbox." },
-    { text: "Personalized alerts for categories you actually care about." },
-    { text: "Be the first to know about exclusive workshops and hackathons." },
-    { text: "Unsubscribe anytime. No spam, no drama." }
+    { text: "Real-time alerts so you never miss an event." },
+    { text: "Connect with Mumbai's top tech talent." },
+    { text: "Get your questions answered by the community." },
+    { text: "The fastest way to stay in the loop." }
 ]
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -70,7 +70,7 @@ export default function SubscribePage() {
     console.log(data);
     toast({
       title: 'Successfully Subscribed!',
-      description: 'You will now receive updates for the selected categories.',
+      description: 'You will now receive email updates for the selected categories.',
       variant: 'default',
     });
     form.reset();
@@ -88,13 +88,44 @@ export default function SubscribePage() {
                     Never Miss a Beat
                 </h1>
                 <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
-                    Join our exclusive list to get the best of Mumbai's tech scene delivered right to your inbox. No spam, just pure tech goodness.
+                    Our WhatsApp community is the heart of Mumbai's tech scene. Join us for real-time event updates, networking, and discussions.
                 </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-              <Card className="p-6 md:p-8 col-span-1 md:col-span-2">
-                 <h2 className="text-2xl font-bold font-headline mb-6 text-center">Subscribe for Email Updates</h2>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center mb-12">
+                <div className="md:col-span-3">
+                     <Card className="bg-green-500/10 border-green-500/30 p-8 text-center flex flex-col items-center">
+                        <CardHeader className="p-0 mb-4">
+                            <WhatsAppIcon className="h-16 w-16 text-green-600 mx-auto" />
+                            <CardTitle className="text-3xl font-headline mt-4 text-green-800">Join our WhatsApp Community</CardTitle>
+                             <CardDescription className="text-base text-green-700 mt-2">
+                                This is the best way to stay updated. Instant notifications, zero spam.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0 w-full">
+                            <Button asChild className="w-full font-bold text-lg" variant="default" size="lg">
+                                <Link href="https://chat.whatsapp.com/H6NBKxbAMIzHehfIVAjAi1" target="_blank" rel="noopener noreferrer">
+                                   <WhatsAppIcon className="h-6 w-6 mr-3" /> Join Now
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="md:col-span-2">
+                     <ul className="space-y-4">
+                        {whySubscribeItems.map((item, index) => (
+                            <li key={index} className="flex items-start gap-3">
+                                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                                <span className="text-muted-foreground">{item.text}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            <Card className="p-6 md:p-8">
+                <h2 className="text-2xl font-bold font-headline mb-2 text-center">Prefer Email?</h2>
+                <p className="text-muted-foreground text-center mb-6">Get a weekly digest of all events if WhatsApp isn't your thing.</p>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
@@ -102,7 +133,7 @@ export default function SubscribePage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-lg">Your Email</FormLabel>
+                          <FormLabel className="sr-only">Your Email</FormLabel>
                           <FormControl>
                             <div className="relative">
                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -125,12 +156,12 @@ export default function SubscribePage() {
                       render={() => (
                         <FormItem>
                           <div className="mb-4">
-                              <FormLabel className="text-lg">I'm interested in...</FormLabel>
+                              <FormLabel>I'm interested in...</FormLabel>
                               <FormDescription>
                                   Select topics to personalize your updates. Leave blank for all.
                               </FormDescription>
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                               {eventCategories.map((item) => (
                                   <FormField
                                   key={item}
@@ -170,48 +201,12 @@ export default function SubscribePage() {
 
                     <Button type="submit" size="lg" className="w-full font-bold text-lg">
                       <Bell className="mr-2 h-5 w-5" />
-                      Keep Me Posted
+                      Subscribe to Weekly Digest
                     </Button>
                   </form>
                 </Form>
-              </Card>
-
-            <Card className="bg-green-500/10 border-green-500/30">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3 text-green-700">
-                        <WhatsAppIcon className="h-8 w-8" />
-                        <span className="text-2xl font-headline">Join the Community</span>
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground mb-4">
-                        For real-time event alerts, discussions, and networking, join our official WhatsApp group.
-                    </p>
-                    <Button asChild className="w-full font-bold" variant="default" size="lg">
-                        <Link href="https://chat.whatsapp.com/H6NBKxbAMIzHehfIVAjAi1" target="_blank" rel="noopener noreferrer">
-                           <WhatsAppIcon className="h-6 w-6 mr-3" /> Join WhatsApp Now
-                        </Link>
-                    </Button>
-                </CardContent>
             </Card>
 
-            <Card>
-                 <CardHeader>
-                    <CardTitle className="text-xl font-headline">Why Subscribe?</CardTitle>
-                 </CardHeader>
-                <CardContent>
-                    <ul className="space-y-4">
-                        {whySubscribeItems.map((item, index) => (
-                            <li key={index} className="flex items-start gap-3">
-                                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
-                                <span className="text-muted-foreground">{item.text}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </CardContent>
-            </Card>
-
-            </div>
           </div>
         </div>
       </main>
@@ -219,5 +214,3 @@ export default function SubscribePage() {
     </div>
   );
 }
-
-    
