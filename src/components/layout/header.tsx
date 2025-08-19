@@ -10,7 +10,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <Logo />
+        <div className="flex items-center gap-4">
+            <Logo />
+        </div>
         <nav className="hidden md:flex items-center gap-6 text-sm">
             <Link href="/" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Home</Link>
             <Link href="/events" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Events</Link>

@@ -14,7 +14,7 @@ export function Footer() {
              <div className="mb-4">
                <Logo light />
             </div>
-            <p className="text-sm">
+            <p className="text-sm text-gray-400/80">
               Connecting the Mumbai tech community through automated WhatsApp event updates.
             </p>
             <div className="flex space-x-4 mt-4">
@@ -55,8 +55,8 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm flex justify-between">
-          <p>&copy; {new Date().getFullYear()} मुंबई Event Techies. All rights reserved.</p>
-          <p>Admin: Aman & Riya</p>
+          <p>&copy; {new Date().getFullYear()} Mumbai Event Techies. All rights reserved.</p>
+          <p>Admin: Vinit & Riya</p>
         </div>
       </div>
     </footer>
