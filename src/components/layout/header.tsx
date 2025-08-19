@@ -1,10 +1,19 @@
 
 import { Logo } from '@/components/logo';
 import { Button } from '../ui/button';
-import { Menu, Search } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import { ThemeToggle } from '../theme-toggle';
 import { Input } from '../ui/input';
 import Link from 'next/link';
+import { Sheet, SheetContent, SheetHeader, SheetTrigger, SheetClose } from '../ui/sheet';
+
+const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/events", label: "Events" },
+    { href: "/calendar", label: "Calendar" },
+    { href: "/about", label: "About" },
+    { href: "/subscribe", label: "Subscribe" },
+]
 
 export function Header() {
   return (
@@ -14,13 +23,11 @@ export function Header() {
             <Logo />
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm">
-            <Link href="/" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Home</Link>
-            <Link href="/events" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Events</Link>
-            <Link href="/calendar" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Calendar</Link>
-            <Link href="/about" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">About</Link>
-            <Link href="/subscribe" className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">Subscribe</Link>
+            {navLinks.map(link => (
+                <Link key={link.href} href={link.href} className="font-medium text-foreground/60 transition-colors hover:text-foreground/80">{link.label}</Link>
+            ))}
         </nav>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
            <div className="relative hidden sm:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
@@ -30,9 +37,28 @@ export function Header() {
             />
           </div>
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu />
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu />
+                    <span className="sr-only">Open menu</span>
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+                <SheetHeader className="border-b pb-4 mb-4">
+                    <Logo />
+                </SheetHeader>
+                <div className="flex flex-col gap-4">
+                     {navLinks.map(link => (
+                        <SheetClose asChild key={link.href}>
+                            <Link href={link.href} className="font-medium text-lg text-foreground/80 transition-colors hover:text-foreground">
+                                {link.label}
+                            </Link>
+                        </SheetClose>
+                    ))}
+                </div>
+            </SheetContent>
+           </Sheet>
         </div>
       </div>
     </header>

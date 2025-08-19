@@ -1,4 +1,5 @@
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export function Cta() {
   return (
@@ -8,8 +9,10 @@ export function Cta() {
         <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-8">
           Subscribe to our weekly newsletter and get the latest event updates, highlights, and special announcements.
         </p>
-        <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
-          Subscribe
+        <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
+          <Link href="/subscribe">
+            Subscribe
+          </Link>
         </Button>
       </div>
     </section>
