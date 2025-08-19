@@ -15,7 +15,7 @@ const founders = [
         role: "Co-Founder & Tech Lead",
         quote: "I wanted to create something that would make discovering tech events as easy as opening WhatsApp.",
         description: "A passionate full-stack developer and community builder who believes that great technology emerges from great communities. With experience in modern web technologies and a deep love for Mumbai's tech ecosystem, Vinit recognized the need for a centralized platform that could serve the city's diverse tech professionals.",
-        imageUrl: "https://storage.googleapis.com/maker-studio-5f2c8.appspot.com/user-assets/66c0d0246a48a43625f46f33/66c0d0b06a48a43625f46f3a.png",
+        imageUrl: "https://i.postimg.cc/2SwVvn81/me2.jpg",
         imageHint: "man portrait"
     },
     {
