@@ -6,14 +6,14 @@ export function Logo({ light = false }: { light?: boolean }) {
     <Link href="/" className="flex items-center gap-2.5" aria-label="Back to homepage">
        <Image
         src="https://i.postimg.cc/028Qvcsb/Logo.jpg"
-        alt="Mumbai Event Techies Logo"
+        alt="मुंबई Event Techies Logo"
         width={40}
         height={40}
         className="rounded-full"
         priority
       />
       <span className="font-headline text-xl font-bold hidden sm:inline-block">
-        Mumbai Event Techies
+        मुंबई Event Techies
       </span>
     </Link>
   );

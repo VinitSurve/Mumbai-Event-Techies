@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Mumbai Event Echo',
+  title: 'मुंबई Event Techies',
   description: "Your live feed for Mumbai's tech events, powered by the community.",
   icons: {
     icon: 'https://i.postimg.cc/028Qvcsb/Logo.jpg',

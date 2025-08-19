@@ -47,7 +47,7 @@ export function Footer() {
             <div>
                 <h3 className="font-bold text-white mb-4">Contact Us</h3>
                  <ul className="space-y-2 text-sm">
-                  <li className="flex items-center"><Mail size={16} className="mr-2"/> contact@mumbaieventechies.com</li>
+                  <li className="flex items-center"><Mail size={16} className="mr-2"/> contact@mumbaieventtechies.com</li>
                   <li className="flex items-center"><Phone size={16} className="mr-2"/> +91 98765 43210</li>
                   <li className="flex items-center"><MapPin size={16} className="mr-2"/> Mumbai, India</li>
                 </ul>
@@ -55,7 +55,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm flex justify-between">
-          <p>&copy; {new Date().getFullYear()} Mumbai Event Techies. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} मुंबई Event Techies. All rights reserved.</p>
           <p>Admin: Vinit & Riya</p>
         </div>
       </div>
