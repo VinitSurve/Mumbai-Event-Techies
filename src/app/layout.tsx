@@ -7,6 +7,9 @@ import { ThemeProvider } from '@/components/theme-provider';
 export const metadata: Metadata = {
   title: 'Mumbai Event Echo',
   description: "Your live feed for Mumbai's tech events, powered by the community.",
+  icons: {
+    icon: 'https://i.postimg.cc/028Qvcsb/Logo.jpg',
+  },
 };
 
 export default function RootLayout({
