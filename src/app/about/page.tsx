@@ -11,16 +11,20 @@ import Link from 'next/link';
 
 const founders = [
     {
-        name: "Aman",
+        name: "Vinit Surve",
         role: "Co-Founder & Tech Lead",
         quote: "I wanted to create something that would make discovering tech events as easy as opening WhatsApp.",
-        description: "A passionate full-stack developer and community builder who believes that great technology emerges from great communities. With experience in modern web technologies and a deep love for Mumbai's tech ecosystem, Aman recognized the need for a centralized platform that could serve the city's diverse tech professionals."
+        description: "A passionate full-stack developer and community builder who believes that great technology emerges from great communities. With experience in modern web technologies and a deep love for Mumbai's tech ecosystem, Vinit recognized the need for a centralized platform that could serve the city's diverse tech professionals.",
+        imageUrl: "https://placehold.co/100x100.png",
+        imageHint: "man portrait"
     },
     {
         name: "Riya Tiwari",
         role: "Co-Founder & Community Strategist",
         quote: "Every great developer started by attending their first tech meetup. We're here to make sure no one misses that opportunity.",
-        description: "A tech enthusiast and community advocate who understands the pulse of Mumbai's developer ecosystem. Riya brings strategic thinking and user-centric design to ensure our platform serves real community needs, not just tech for tech's sake."
+        description: "A tech enthusiast and community advocate who understands the pulse of Mumbai's developer ecosystem. Riya brings strategic thinking and user-centric design to ensure our platform serves real community needs, not just tech for tech's sake.",
+        imageUrl: "https://placehold.co/100x100.png",
+        imageHint: "woman portrait"
     }
 ]
 
@@ -135,8 +139,14 @@ export default function AboutPage() {
                 <CardContent className="space-y-8">
                     {founders.map(founder => (
                         <div key={founder.name} className="flex flex-col sm:flex-row items-start gap-6 bg-secondary/50 p-6 rounded-lg">
-                           <div className="flex-shrink-0 w-20 h-20 bg-muted rounded-full flex items-center justify-center">
-                                <Users className="w-10 h-10 text-muted-foreground" />
+                           <div className="flex-shrink-0 w-24 h-24 relative">
+                                <Image 
+                                    src={founder.imageUrl} 
+                                    alt={`Photo of ${founder.name}`}
+                                    className="rounded-full object-cover"
+                                    data-ai-hint={founder.imageHint}
+                                    fill
+                                />
                            </div>
                            <div className="flex-1">
                                 <h3 className="text-xl font-bold font-headline">{founder.name}</h3>
@@ -308,6 +318,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
-
-    
