@@ -1,11 +1,10 @@
-
 // src/components/submit-event/submit-form.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link as LinkIcon, Loader2, CheckCircle, AlertCircle, PartyPopper, Clipboard } from "lucide-react";
+import { Link as LinkIcon, Loader2, CheckCircle, AlertCircle, PartyPopper, Clipboard, Share2 } from "lucide-react";
 import { platformIcons, detectPlatform } from "./platform-icons";
 import Confetti from 'react-confetti';
 import { useToast } from "@/hooks/use-toast";
@@ -108,6 +107,30 @@ ${websiteUrl}
     });
   }
 
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "New Event Submission Template",
+          text: whatsAppMessage,
+        });
+      } else {
+        toast({
+            title: "Share Not Supported",
+            description: "Your browser does not support the Web Share API. Use the copy button instead.",
+            variant: "destructive"
+        });
+      }
+    } catch (error) {
+        console.error("Error sharing:", error);
+        toast({
+            title: "Error",
+            description: "Could not share the template.",
+            variant: "destructive",
+        });
+    }
+  };
+
   const renderStatus = () => {
     switch (status) {
         case "loading": return <Loader2 className="animate-spin" />;
@@ -139,14 +162,24 @@ ${websiteUrl}
                 <p className="text-xs text-green-600 mt-2 text-center">
                   This message will be auto-generated once admin approves your event!
                 </p>
-                <motion.button
-                    onClick={copyToClipboard}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                    <Clipboard className="w-4 h-4" /> Copy Template
-                </motion.button>
+                <div className="flex gap-2 mt-4">
+                  <motion.button
+                      onClick={copyToClipboard}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                      <Clipboard className="w-4 h-4" /> Copy Template
+                  </motion.button>
+                   <motion.button
+                      onClick={handleShare}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                      <Share2 className="w-4 h-4" /> Share Template
+                  </motion.button>
+                </div>
             </div>
 
             <motion.button
