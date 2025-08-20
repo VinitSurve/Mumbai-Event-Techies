@@ -12,7 +12,7 @@ export function Logo({ light = false }: { light?: boolean }) {
         className="rounded-full"
         priority
       />
-      <span className="font-headline text-xl font-bold hidden sm:inline-block">
+      <span className="font-headline text-xl font-bold">
         मुंबई Event Techies
       </span>
     </Link>

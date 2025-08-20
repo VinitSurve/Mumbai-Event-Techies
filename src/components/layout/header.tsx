@@ -44,7 +44,7 @@ export function Header() {
                     <span className="sr-only">Open menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left">
+            <SheetContent side="right">
                 <SheetHeader className="border-b pb-4 mb-4">
                     <Logo />
                 </SheetHeader>
