@@ -1,6 +1,5 @@
 // src/lib/scrapers/generic.ts
 import moment from 'moment';
-import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { BaseScraper } from './base';
 import { sleep, sanitizeString } from '@/lib/utils';
@@ -9,10 +8,7 @@ import type { Event } from '@/lib/types';
 export class GenericScraper extends BaseScraper {
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
-      if (!this.page) {
-        throw new Error('Page not initialized');
-      }
+      
       await this.navigate(url);
       
       const metadata = await this.extractMetadata();
@@ -65,8 +61,6 @@ export class GenericScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping generic event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
 

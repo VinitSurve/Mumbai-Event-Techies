@@ -1,6 +1,7 @@
 // src/lib/scrapers/index.ts
 import type { Event } from '@/lib/types';
 import type { BaseScraper } from './base';
+import type { Page } from 'puppeteer';
 
 // Import individual scraper classes
 import { MeetupScraper } from './meetup';
@@ -17,37 +18,37 @@ import { IBMScraper } from './ibm';
 
 
 // Scraper factory to return the appropriate scraper for a given URL
-export const selectScraper = (url: string): BaseScraper => {
+export const selectScraper = (url: string, page: Page): BaseScraper => {
     try {
         const urlObj = new URL(url);
         const hostname = urlObj.hostname.toLowerCase();
 
         if (hostname.includes('meetup.com') || hostname.includes('meetu.ps')) {
-            return new MeetupScraper();
+            return new MeetupScraper(page);
         } else if (hostname.includes('eventbrite.com') || hostname.includes('eventbrite.')) {
-            return new EventbriteScraper();
+            return new EventbriteScraper(page);
         } else if (hostname.includes('lu.ma') || hostname.includes('luma.com')) {
-            return new LumaScraper();
+            return new LumaScraper(page);
         } else if (hostname.includes('bevy.com')) {
-            return new BevyScraper();
+            return new BevyScraper(page);
         } else if (hostname.includes('devfolio.co')) {
-            return new DevfolioScraper();
+            return new DevfolioScraper(page);
         } else if (hostname.includes('devpost.com')) {
-            return new DevpostScraper();
+            return new DevpostScraper(page);
         } else if (hostname.includes('gdg.community.dev')) {
-           return new GDGScraper();
+           return new GDGScraper(page);
         } else if (hostname.includes('hack2skill.com')) {
-          return new Hack2SkillScraper();
+          return new Hack2SkillScraper(page);
         } else if (hostname.includes('unstop.com')) {
-          return new UnstopScraper();
+          return new UnstopScraper(page);
         } else if (hostname.includes('ibm.com')) {
-          return new IBMScraper();
+          return new IBMScraper(page);
         }
         else {
-            return new GenericScraper();
+            return new GenericScraper(page);
         }
     } catch (err) {
         console.error('Error creating scraper:', (err as Error).message);
-        return new GenericScraper();
+        return new GenericScraper(page);
     }
 };

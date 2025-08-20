@@ -13,9 +13,6 @@ export class LumaScraper extends BaseScraper {
    */
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
-      if (!this.page) throw new Error("Page not initialized");
-      await this.navigate(url);
       
       // Wait for essential elements
       try {
@@ -458,8 +455,6 @@ export class LumaScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping Lu.ma event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape Lu.ma event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
 }

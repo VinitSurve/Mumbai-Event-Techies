@@ -7,17 +7,14 @@ import type { Event } from '@/lib/types';
 export class GDGScraper extends BaseScraper {
   platform: string;
 
-  constructor() {
-    super();
+  constructor(page: any) {
+    super(page);
     this.platform = 'Google Developer Groups';
   }
 
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
-      if (!this.page) {
-        throw new Error('Page not initialized');
-      }
+      
       this.url = url;
       
       console.log('Navigating to GDG URL...');
@@ -319,8 +316,6 @@ export class GDGScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping GDG event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape GDG event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
 

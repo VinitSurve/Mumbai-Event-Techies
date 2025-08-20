@@ -1,4 +1,3 @@
-
 // src/app/api/submit-event/route.ts
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -6,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { selectScraper } from '@/lib/scrapers';
 import { firestore } from '@/lib/firebase-admin';
 import type { Event } from '@/lib/types';
-import { BaseScraper } from '@/lib/scrapers/base';
+import puppeteer, { Browser, Page } from 'puppeteer';
+import UserAgent from 'user-agents';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
@@ -53,7 +53,7 @@ https://mumbai-event-techies.vercel.app/events/${event.slug}
 
 
 export async function POST(request: Request) {
-  let scraper: BaseScraper | null = null;
+  let browser: Browser | null = null;
   try {
     const body = await request.json();
     const parsed = submitUrlSchema.safeParse(body);
@@ -67,7 +67,16 @@ export async function POST(request: Request) {
     
     console.log(`[${eventId}] Scraping for ${url} initiated.`);
     
-    scraper = selectScraper(url);
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    const userAgent = new UserAgent();
+    await page.setUserAgent(userAgent.toString());
+
+
+    const scraper = selectScraper(url, page);
     console.log(`[${eventId}] Using scraper for domain: ${new URL(url).hostname}`);
     
     const scrapedData = await scraper.scrape(url);
@@ -105,7 +114,6 @@ export async function POST(request: Request) {
     
     const whatsappMessage = generateWhatsAppMessage(finalEvent);
 
-    // Respond to the client immediately
     return NextResponse.json({
       success: true,
       eventId: eventId,
@@ -118,8 +126,8 @@ export async function POST(request: Request) {
     console.error('Error in /api/submit-event:', error);
     return NextResponse.json({ error: 'An unexpected error occurred during scraping.' }, { status: 500 });
   } finally {
-      if (scraper) {
-        await scraper.close();
+      if (browser) {
+        await browser.close();
         console.log('Browser closed.');
       }
   }

@@ -7,14 +7,13 @@ import type { Event } from '@/lib/types';
 export class BevyScraper extends BaseScraper {
   platform: string;
 
-  constructor() {
-    super();
+  constructor(page: any) {
+    super(page);
     this.platform = 'Bevy';
   }
 
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
       this.url = url;
       
       console.log('Navigating to Bevy URL...');
@@ -221,8 +220,6 @@ export class BevyScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping Bevy event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape Bevy event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
 

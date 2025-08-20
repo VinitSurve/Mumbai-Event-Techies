@@ -7,16 +7,14 @@ import type { Event } from '@/lib/types';
 export class Hack2SkillScraper extends BaseScraper {
   platform: string;
 
-  constructor() {
-    super();
+  constructor(page: any) {
+    super(page);
     this.platform = 'Hack2Skill';
   }
 
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
-      if (!this.page) throw new Error('Page not initialized');
-
+      
       this.url = url;
       
       console.log('Navigating to Hack2Skill URL...');
@@ -228,6 +226,76 @@ export class Hack2SkillScraper extends BaseScraper {
           }
         }
         
+        data.tags = [];
+        
+        const tagSections = [
+          ...findElementsByText('Tags:'),
+          ...findElementsByText('Categories:'),
+          ...findElementsByText('Topics:'),
+          ...findElementsByText('Key Themes:')
+        ];
+        
+        for (const section of tagSections) {
+          const parent = section.parentElement;
+          if (parent) {
+            const tagElements = parent.querySelectorAll('span.tag, a.tag, .badge, .chip');
+            if (tagElements.length > 0) {
+              for (const tag of tagElements) {
+                const tagText = tag.textContent?.trim();
+                if (tagText && tagText.length > 1) {
+                  data.tags.push(tagText.toLowerCase());
+                }
+              }
+            }
+            
+            if (data.tags.length === 0) {
+              const nextSibling = parent.nextElementSibling;
+              if (nextSibling) {
+                const tagText = nextSibling.textContent?.trim();
+                if (tagText) {
+                    const tagArray = tagText.split(/,|;|\|/).map(t => t.trim().toLowerCase());
+                    data.tags = tagArray.filter(t => t.length > 1);
+                }
+              }
+            }
+            
+            if (data.tags.length > 0) break;
+          }
+        }
+        
+        if (data.tags.length === 0) {
+          const commonTags = ['tech', 'coding', 'hackathon', 'innovation', 'competition', 'challenge', 'ai', 'machine learning', 'data science', 'web', 'mobile', 'blockchain', 'cloud', 'iot'];
+          
+          for (const tag of commonTags) {
+            const pageText = (data.title?.toLowerCase() || '') + ' ' + (data.description?.toLowerCase() || '');
+            if (pageText.includes(tag)) {
+              data.tags.push(tag);
+            }
+          }
+          
+          if (data.eventType && data.eventType !== 'Event') {
+            data.tags.push(data.eventType.toLowerCase());
+          }
+        }
+        
+        data.imageUrl = '';
+        
+        const ogImage = document.querySelector('meta[property="og:image"]');
+        if (ogImage) {
+          data.imageUrl = ogImage.getAttribute('content');
+        } else {
+          const images: NodeListOf<HTMLImageElement> = Array.from(document.querySelectorAll('img')).filter(img => {
+            const src = img.getAttribute('src');
+            const width = img.offsetWidth;
+            const height = img.offsetHeight;
+            return src && width > 200 && height > 150 && !src.includes('logo');
+          }) as NodeListOf<HTMLImageElement>;
+          
+          if (images.length > 0) {
+            data.imageUrl = images[0].getAttribute('src');
+          }
+        }
+        
         return data;
       });
       
@@ -259,8 +327,6 @@ export class Hack2SkillScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping Hack2Skill event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape Hack2Skill event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
   

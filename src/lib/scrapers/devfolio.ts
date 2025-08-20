@@ -7,14 +7,13 @@ import type { Event } from '@/lib/types';
 export class DevfolioScraper extends BaseScraper {
   platform: string;
 
-  constructor() {
-    super();
+  constructor(page: any) {
+    super(page);
     this.platform = 'Devfolio';
   }
 
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
       this.url = url;
       
       console.log('Navigating to Devfolio URL...');
@@ -143,8 +142,6 @@ export class DevfolioScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping Devfolio event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape Devfolio event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
 }

@@ -41,9 +41,7 @@ export class MeetupScraper extends BaseScraper {
 
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
-      if (!this.page) throw new Error("Page not initialized");
-
+      
       console.log('Navigating to Meetup URL...');
       
       // Enhanced navigation for Meetup
@@ -1010,8 +1008,6 @@ export class MeetupScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping Meetup event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape Meetup event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
-    }
+    } 
   }
 }

@@ -7,17 +7,14 @@ import type { Event } from '@/lib/types';
 export class DevpostScraper extends BaseScraper {
   platform: string;
 
-  constructor() {
-    super();
+  constructor(page: any) {
+    super(page);
     this.platform = 'Devpost';
   }
 
   async scrape(url: string): Promise<Partial<Event>> {
     try {
-      await this.initialize();
-      if (!this.page) {
-        throw new Error('Page not initialized');
-      }
+      
       this.url = url;
       
       console.log('Navigating to Devpost URL...');
@@ -397,8 +394,6 @@ export class DevpostScraper extends BaseScraper {
     } catch (err) {
       console.error(`Error scraping Devpost event: ${(err as Error).message}`);
       throw new Error(`Failed to scrape Devpost event: ${(err as Error).message}`);
-    } finally {
-      await this.close();
     }
   }
 }

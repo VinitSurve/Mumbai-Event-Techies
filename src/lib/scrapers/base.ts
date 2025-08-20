@@ -1,24 +1,18 @@
 // src/lib/scrapers/base.ts
-import { createPage, closePage, Browser, Page, launchBrowser, close } from '@/lib/browser';
+import type { Page, Browser } from 'puppeteer';
 import { sleep, sanitizeString } from '@/lib/utils';
 import type { Event } from '@/lib/types';
 
 
 export class BaseScraper {
-  page: Page | null = null;
-  browser: Browser | null = null;
+  page: Page;
   url: string = '';
 
-  async initialize() {
-      this.browser = await launchBrowser();
-      this.page = await createPage(this.browser);
+  constructor(page: Page) {
+    this.page = page;
   }
 
   async navigate(url: string, options: object = {}) {
-    if (!this.page) {
-      await this.initialize();
-    }
-
     const defaultOptions = {
       waitUntil: 'networkidle2',
       timeout: parseInt(process.env.NAVIGATION_TIMEOUT || '60000', 10)
@@ -28,13 +22,10 @@ export class BaseScraper {
 
     try {
       await this.page!.goto(url, navigationOptions);
-      
       await sleep(2000);
-      
       await this.page!.evaluate(() => {
         window.scrollBy(0, 300);
       });
-      
       await sleep(1000);
     } catch (err) {
       console.error(`Navigation error: ${(err as Error).message}`);
@@ -109,17 +100,6 @@ export class BaseScraper {
   
   async scrape(url: string): Promise<Partial<Event>> {
     throw new Error('scrape() method must be implemented by subclasses');
-  }
-
-  async close() {
-    if (this.page) {
-      await closePage(this.page);
-      this.page = null;
-    }
-    if (this.browser) {
-      await close(this.browser);
-      this.browser = null;
-    }
   }
   
   normalizeEventData(eventData: any, url: string): Partial<Event> {

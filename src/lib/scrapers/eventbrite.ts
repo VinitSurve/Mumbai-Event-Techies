@@ -6,10 +6,6 @@ export class EventbriteScraper extends BaseScraper {
     async scrape(url: string): Promise<Partial<Event>> {
         console.log(`Scraping Eventbrite URL: ${url}`);
         
-        await this.initialize();
-        if (!this.page) {
-            throw new Error('Page not initialized');
-        }
         await this.navigate(url);
         
         // Placeholder for real scraping logic
@@ -21,7 +17,6 @@ export class EventbriteScraper extends BaseScraper {
             category: 'Conference',
         };
 
-        await this.close();
         return this.normalizeEventData(eventData, url);
     }
 }
