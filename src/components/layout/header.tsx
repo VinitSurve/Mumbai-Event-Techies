@@ -1,7 +1,7 @@
 
 import { Logo } from '@/components/logo';
 import { Button } from '../ui/button';
-import { Menu, PlusCircle } from 'lucide-react';
+import { Menu, PlusCircle, Bell } from 'lucide-react';
 import { ThemeToggle } from '../theme-toggle';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '../ui/sheet';
@@ -10,7 +10,6 @@ const navLinks = [
     { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
     { href: "/calendar", label: "Calendar" },
-    { href: "/notifications", label: "Notifications" },
     { href: "/about", label: "About" },
     { href: "/subscribe", label: "Subscribe" },
 ]
@@ -28,6 +27,12 @@ export function Header() {
             ))}
         </nav>
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/notifications">
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">Notifications</span>
+            </Link>
+          </Button>
           <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
@@ -49,6 +54,11 @@ export function Header() {
                             </Link>
                         </SheetClose>
                     ))}
+                     <SheetClose asChild>
+                        <Link href="/notifications" className="font-medium text-lg text-foreground/80 transition-colors hover:text-foreground">
+                            Notifications
+                        </Link>
+                    </SheetClose>
                 </div>
             </SheetContent>
            </Sheet>
