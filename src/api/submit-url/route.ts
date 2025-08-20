@@ -6,7 +6,8 @@ import { selectScraper } from '@/lib/scrapers';
 import { close as closeBrowser } from '@/lib/browser';
 import { firestore } from '@/lib/firebase-admin';
 import type { Event } from '@/lib/types';
-import { sendReviewEmail } from '@/ai/flows/send-review-email';
+// The sendReviewEmail flow is no longer called from here.
+// It will be triggered by Firestore directly.
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
@@ -31,11 +32,7 @@ async function handleEventScraping(url: string, requestId: string) {
         
         const db = firestore;
         await db.collection('pendingEvents').doc(requestId).set(pendingEvent);
-        console.log(`[${requestId}] Data saved to Firestore.`);
-
-        // After saving, trigger the admin notification email
-        await sendReviewEmail({ requestId, event: pendingEvent });
-        console.log(`[${requestId}] Admin review email flow triggered.`);
+        console.log(`[${requestId}] Data saved to Firestore. A function will now trigger the email.`);
         
     } catch (error) {
         console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
