@@ -1,4 +1,3 @@
-
 // src/app/events/[id]/page.tsx
 "use client";
 
@@ -17,7 +16,11 @@ import Link from "next/link";
 import { EventCard } from "@/components/event-card";
 import { useToast } from "@/hooks/use-toast";
 
-export default function EventDetailPage({ params }: { params: { id: string } }) {
+interface EventDetailPageProps {
+  params: { id: string };
+}
+
+export default function EventDetailPage({ params }: EventDetailPageProps) {
     const { id } = params;
     const { toast } = useToast();
     const pathname = usePathname();

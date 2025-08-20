@@ -10,8 +10,10 @@ import { Check, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { notFound, useParams, useSearchParams } from 'next/navigation';
 import type { Event } from '@/lib/types';
-import { doc, getDoc } from 'firebase/firestore';
-import { firestore } from '@/lib/firebase'; // Note: Using client-side firebase instance
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { app } from '@/lib/firebase'; // Note: Using client-side firebase instance
+
+const firestore = getFirestore(app);
 
 export default function AdminReviewPage() {
     const params = useParams();

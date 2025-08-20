@@ -1,7 +1,7 @@
 // src/lib/scrapers/generic.ts
 import moment from 'moment';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { BaseScraper } from './base';
 import { sleep, sanitizeString } from '@/lib/utils';
 import type { Event } from '@/lib/types';
