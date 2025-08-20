@@ -1,4 +1,4 @@
-{{// src/lib/scrapers/index.ts
+// src/lib/scrapers/index.ts
 import type { Event } from '@/lib/types';
 import type { BaseScraper } from './base';
 

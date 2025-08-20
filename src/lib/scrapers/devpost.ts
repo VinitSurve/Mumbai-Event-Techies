@@ -1,4 +1,4 @@
-{// src/lib/scrapers/devpost.ts
+// src/lib/scrapers/devpost.ts
 import moment from 'moment';
 import { BaseScraper } from './base';
 import { sleep, sanitizeString } from '@/lib/utils';
