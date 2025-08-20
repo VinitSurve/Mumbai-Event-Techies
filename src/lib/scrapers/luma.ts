@@ -1,4 +1,4 @@
-{// src/lib/scrapers/luma.ts
+// src/lib/scrapers/luma.ts
 import moment from 'moment';
 import { BaseScraper } from './base';
 import { sleep, sanitizeString } from '@/lib/utils';

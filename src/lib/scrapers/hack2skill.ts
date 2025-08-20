@@ -1,4 +1,4 @@
-{// src/lib/scrapers/hack2skill.ts
+// src/lib/scrapers/hack2skill.ts
 import moment from 'moment';
 import { BaseScraper } from './base';
 import { sleep, sanitizeString } from '@/lib/utils';

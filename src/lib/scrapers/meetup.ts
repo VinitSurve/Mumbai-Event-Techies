@@ -1,4 +1,4 @@
-{// src/lib/scrapers/meetup.ts
+// src/lib/scrapers/meetup.ts
 import moment from 'moment';
 import { BaseScraper } from './base';
 import { sleep, sanitizeString } from '@/lib/utils';
@@ -466,7 +466,7 @@ export class MeetupScraper extends BaseScraper {
           // Try to extract just the location and address parts
           const cleanAddress = () => {
             // Look for the actual address pattern
-            const addressPattern = /(Microsoft Corporation[^,]*,\\s*Central Salsette Tramway Road,\\s*Mumbai)/i;
+            const addressPattern = /(Microsoft Corporation[^,]*,\s*Central Salsette Tramway Road,\s*Mumbai)/i;
             if(data.fullAddress) {
                 const match = data.fullAddress.match(addressPattern);
                 if (match && match[1]) {
@@ -495,7 +495,7 @@ export class MeetupScraper extends BaseScraper {
             // Clean up extra spaces, commas, etc
             data.fullAddress = data.fullAddress
               .replace(/\s+/g, ' ')
-              .replace(/,\\s*,/g, ',')
+              .replace(/,\s*,/g, ',')
               .replace(/\s*·\s*/g, ', ')
               .trim();
               
@@ -503,7 +503,7 @@ export class MeetupScraper extends BaseScraper {
             if (data.title) {
               data.fullAddress = data.fullAddress.replace(new RegExp(data.title + '$'), '').trim();
               // Remove trailing commas
-              data.fullAddress = data.fullAddress.replace(/,\\s*$/, '').trim();
+              data.fullAddress = data.fullAddress.replace(/,\s*$/, '').trim();
             }
           }
         }        // Check for "Google map" label next to a location
