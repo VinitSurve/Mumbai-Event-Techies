@@ -8,13 +8,13 @@ import { Link as LinkIcon, Loader2, CheckCircle, AlertCircle, PartyPopper, Clipb
 import { platformIcons, detectPlatform } from "./platform-icons";
 import Confetti from 'react-confetti';
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 
 type FormData = {
   eventUrl: string;
 };
 
-// A simple client-side URL validation
 const isValidUrl = (url: string) => {
   try {
     new URL(url);
@@ -26,49 +26,31 @@ const isValidUrl = (url: string) => {
 
 
 export function SubmitForm() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormData>({mode: 'onChange'});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const { toast } = useToast();
+  const [requestId, setRequestId] = useState<string | null>(null);
 
   const eventUrl = watch("eventUrl", "");
   const platform = detectPlatform(eventUrl);
 
-  // Mock event data for template
-   const mockEventDetails = {
-    title: "OnlyDevs - Solana Developer Gathering",
-    date: "Sat, Oct 4 • 10:00 AM",
-    location: "Sofitel Mumbai BKC"
-  };
-
-  const generateTemplateMessage = (eventData: typeof mockEventDetails) => {
-    const eventSlug = (eventData.title || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      + '-mumbai-' + new Date().toLocaleString('default', { month: 'short' }).toLowerCase() + '-' + new Date().getFullYear();
-  
-    const websiteUrl = `https://mumbai-event-techies.vercel.app/events/${eventSlug}`;
+  const generateTemplateMessage = (reqId: string) => {
+    const previewUrl = `https://mumbai-event-techies.vercel.app/events/preview/${reqId}`;
   
     return `🚀 *मुंबई Event Techies* presents
+A new tech event is being reviewed!
 
-*${eventData.title}*
+Details under review—share this post and we’ll update soon!
 
-📅 ${eventData.date}
-📍 ${eventData.location}
-
-Curated by मुंबई Event Techies community for Mumbai's tech enthusiasts! 
-
-👆 Tap to view full details, register & connect with fellow developers
-
-${websiteUrl}
+👆 Tap to view status & get notified on approval:
+${previewUrl}
 
 #MumbaiTech #EventTechies #TechCommunity`;
   };
 
-  const whatsAppMessage = generateTemplateMessage(mockEventDetails);
+  const whatsAppMessage = requestId ? generateTemplateMessage(requestId) : "";
 
 
   useEffect(() => {
@@ -78,25 +60,38 @@ ${websiteUrl}
     window.addEventListener('resize', handleResize);
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
-}, []);
+  }, []);
 
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     setStatus("loading");
-    // Simulate API call
-    setTimeout(() => {
-      if (isValidUrl(data.eventUrl)) {
-        setStatus("success");
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 8000); // Stop confetti after 8s
-      } else {
+    try {
+        const response = await fetch('/api/submit-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: data.eventUrl }),
+        });
+
+        const result = await response.json();
+
+        if (response.status === 202) {
+            setRequestId(result.requestId);
+            setStatus("success");
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 8000);
+        } else {
+            throw new Error(result.error || 'Submission failed');
+        }
+    } catch (error) {
+        console.error("Submission error:", error);
         setStatus("error");
-      }
-    }, 2000);
+        toast({ title: "Submission Failed", description: "Could not submit the URL. Please try again.", variant: 'destructive' });
+    }
   };
   
   const resetForm = () => {
     setStatus("idle");
+    setRequestId(null);
   }
 
   const copyToClipboard = () => {
@@ -159,27 +154,24 @@ ${websiteUrl}
         >
             {showConfetti && <Confetti width={windowSize.width} height={windowSize.height} recycle={false} />}
             <PartyPopper className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Event Submitted Successfully! 🎉</h2>
-            <p className="text-slate-300 mb-6">Our admin team will review and approve it within 24 hours.</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Event Submitted! 🎉</h2>
+            <p className="text-slate-300 mb-6">Our admin team will review it. In the meantime, you can share this placeholder link with the community.</p>
 
             <div className="my-8 text-left bg-slate-900/70 p-4 rounded-lg border border-slate-700">
-                <h3 className="text-lg font-bold text-white mb-3">WhatsApp Post Template</h3>
+                <h3 className="text-lg font-bold text-white mb-3">Share this placeholder post on WhatsApp:</h3>
                 <div className="bg-white rounded-lg p-3 border shadow-sm">
                     <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
                         {whatsAppMessage}
                     </pre>
                 </div>
-                <p className="text-xs text-green-600 mt-2 text-center">
-                  This message will be auto-generated once admin approves your event!
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                 <div className="flex flex-col sm:flex-row gap-2 mt-4">
                   <motion.button
                       onClick={copyToClipboard}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
-                      <Clipboard className="w-4 h-4" /> Copy Template
+                      <Clipboard className="w-4 h-4" /> Copy
                   </motion.button>
                    <motion.button
                       onClick={handleShare}
@@ -187,7 +179,7 @@ ${websiteUrl}
                       whileTap={{ scale: 0.95 }}
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
-                      <Share2 className="w-4 h-4" /> Share Template
+                      <Share2 className="w-4 h-4" /> Share
                   </motion.button>
                 </div>
             </div>
@@ -235,7 +227,7 @@ ${websiteUrl}
         </div>
         <motion.button
           type="submit"
-          disabled={status === "loading"}
+          disabled={status === "loading" || !isValid}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="w-full sm:w-auto px-6 py-2.5 h-16 font-semibold text-white bg-gradient-to-r from-purple-600 to-orange-500 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:from-purple-700 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
