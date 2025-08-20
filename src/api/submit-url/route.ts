@@ -1,3 +1,4 @@
+
 // src/app/api/submit-url/route.ts
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -6,52 +7,50 @@ import { selectScraper } from '@/lib/scrapers';
 import { close as closeBrowser } from '@/lib/browser';
 import { firestore } from '@/lib/firebase-admin';
 import type { Event } from '@/lib/types';
-import { sendReviewEmail } from '@/ai/flows/send-review-email';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
 });
 
-async function handleEventScraping(url: string, requestId: string) {
-    console.log(`[${requestId}] Scraping for ${url} initiated.`);
-    
-    try {
-        const scraper = selectScraper(url);
-        console.log(`[${requestId}] Using scraper for domain: ${new URL(url).hostname}`);
-        
-        const scrapedData = await scraper.scrape(url);
-        console.log(`[${requestId}] Scraping successful.`);
+const generateSlug = (title: string, eventDate?: string): string => {
+    const cleanTitle = title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // remove special chars
+        .replace(/\s+/g, '-') // replace spaces with hyphens
+        .substring(0, 60);
 
-        const pendingEvent: Partial<Event> & { originalUrl: string, status: string, submittedAt: string } = {
-            ...scrapedData,
-            originalUrl: url,
-            status: 'pending',
-            submittedAt: new Date().toISOString(),
-        };
-        
-        const db = firestore;
-        await db.collection('pendingEvents').doc(requestId).set(pendingEvent);
-        console.log(`[${requestId}] Data saved to Firestore. Triggering admin review email.`);
+    const dateStr = eventDate
+        ? new Date(eventDate).toISOString().slice(0, 7) // "2025-10"
+        : new Date().toISOString().slice(0, 7);
 
-        // Trigger the admin review email flow
-        await sendReviewEmail({ requestId, event: pendingEvent });
-        
-    } catch (error) {
-        console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
-        try {
-            await firestore.collection('pendingEvents').doc(requestId).set({
-                originalUrl: url,
-                status: 'error',
-                error: (error as Error).message,
-                submittedAt: new Date().toISOString(),
-            });
-        } catch (dbError) {
-            console.error(`[${requestId}] Failed to write error status to Firestore:`, dbError);
-        }
-    } finally {
-        await closeBrowser(); 
-    }
+    return `${cleanTitle}-${dateStr}`;
 }
+
+const generateWhatsAppMessage = (event: Event): string => {
+    const eventDate = new Date(event.event_date).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+    });
+
+    return `🚀 मुंबई Event Techies presents
+
+${event.title}
+
+📅 ${eventDate}
+📍 ${event.location}
+
+Curated by मुंबई Event Techies community for Mumbai's tech enthusiasts!
+
+👆 Tap to view full details, register & connect with fellow developers
+
+https://mumbai-event-techies.vercel.app/events/${event.slug}
+
+#MumbaiTech #EventTechies #TechCommunity`;
+}
+
 
 export async function POST(request: Request) {
   try {
@@ -63,21 +62,62 @@ export async function POST(request: Request) {
     }
 
     const { url } = parsed.data;
-    const requestId = uuidv4();
+    const eventId = uuidv4();
+    
+    console.log(`[${eventId}] Scraping for ${url} initiated.`);
+    
+    const scraper = selectScraper(url);
+    console.log(`[${eventId}] Using scraper for domain: ${new URL(url).hostname}`);
+    
+    const scrapedData = await scraper.scrape(url);
+    console.log(`[${eventId}] Scraping successful.`);
 
-    // Start the background scraping process but don't wait for it
-    (async () => {
-      await handleEventScraping(url, requestId);
-    })();
+    const eventSlug = generateSlug(scrapedData.title || 'event', scrapedData.event_date);
+
+    const finalEvent: Event = {
+        id: eventId,
+        slug: eventSlug,
+        title: scrapedData.title || "Untitled Event",
+        description: scrapedData.description || "",
+        event_date: scrapedData.event_date || new Date().toISOString(),
+        location: scrapedData.location || "TBD",
+        category: scrapedData.category || "Tech Talk",
+        urls: scrapedData.urls || [url],
+        image_url: scrapedData.image_url || null,
+        organizer: scrapedData.organizer,
+        price: scrapedData.price,
+        tags: scrapedData.tags,
+        platform: scrapedData.platform,
+        registrationUrl: scrapedData.registrationUrl || url,
+        isApproved: true,
+        createdAt: new Date().toISOString(),
+        submittedAt: new Date().toISOString(),
+        originalUrl: url,
+        viewCount: 0,
+        clickCount: 0,
+        status: 'upcoming',
+    };
+    
+    const db = firestore;
+    await db.collection('events').doc(eventId).set(finalEvent);
+    console.log(`[${eventId}] Event data saved to Firestore.`);
+
+    await closeBrowser(); 
+    
+    const whatsappMessage = generateWhatsAppMessage(finalEvent);
 
     // Respond to the client immediately
     return NextResponse.json({
-      requestId,
-      message: 'Scraping in progress…',
-    }, { status: 202 });
+      success: true,
+      eventId: eventId,
+      eventUrl: `https://mumbai-event-techies.vercel.app/events/${eventSlug}`,
+      whatsappMessage: whatsappMessage,
+      message: 'Event published successfully!',
+    }, { status: 200 });
 
   } catch (error) {
     console.error('Error in /api/submit-url:', error);
-    return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
+    await closeBrowser();
+    return NextResponse.json({ error: 'An unexpected error occurred during scraping.' }, { status: 500 });
   }
 }

@@ -1,27 +1,33 @@
+
 export type Event = {
   id: string;
+  slug: string; // URL-friendly: "react-meetup-mumbai-oct-2025"
+
+  // Event details
   title: string;
-  description: string | null;
+  description: string;
   event_date: string; // ISO string
-  location: string | null;
-  category: 'Tech Talk' | 'Workshop' | 'Conference' | 'Meetup' | 'Hackathon';
-  urls: string[] | null;
-  image_url: string | null;
-  status: 'upcoming' | 'ongoing' | 'completed';
-  slug?: string; // URL-friendly slug
+  eventTime?: string;
+  location: string;
   organizer?: string;
+  image_url?: string | null;
   price?: string;
+  category: 'Tech Talk' | 'Workshop' | 'Conference' | 'Meetup' | 'Hackathon';
   tags?: string[];
-  platform?: string;
-  registrationUrl?: string;
-  isApproved?: boolean;
-  createdAt?: string; // ISO string
-  approvedAt?: string; // ISO string
-  sourceRequestId?: string;
+  platform?: string; // "Meetup", "Eventbrite", etc.
+  registrationUrl?: string; // original URL
+
+  // Meta fields
+  isApproved: boolean; // always true for auto-publish
+  createdAt: string; // ISO string
+  submittedAt: string; // ISO string
+  submitterEmail?: string;
+  originalUrl: string; // original submitted URL
+
+  // Analytics
   viewCount?: number;
   clickCount?: number;
-  originalUrl?: string;
-  submittedAt?: string; // ISO string
+  status?: 'upcoming' | 'ongoing' | 'completed';
 };
 
 export const eventCategories: Event['category'][] = ['Tech Talk', 'Workshop', 'Conference', 'Meetup', 'Hackathon'];

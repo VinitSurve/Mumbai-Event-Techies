@@ -1,3 +1,4 @@
+
 // src/components/submit-event/submit-form.tsx
 "use client";
 
@@ -15,6 +16,11 @@ type FormData = {
   eventUrl: string;
 };
 
+type SuccessState = {
+    eventUrl: string;
+    whatsappMessage: string;
+};
+
 const isValidUrl = (url: string) => {
   try {
     new URL(url);
@@ -28,30 +34,14 @@ const isValidUrl = (url: string) => {
 export function SubmitForm() {
   const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormData>({mode: 'onChange'});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successState, setSuccessState] = useState<SuccessState | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const { toast } = useToast();
-  const [requestId, setRequestId] = useState<string | null>(null);
 
   const eventUrl = watch("eventUrl", "");
   const platform = detectPlatform(eventUrl);
-
-  const generateTemplateMessage = (reqId: string) => {
-    const previewUrl = `https://mumbai-event-techies.vercel.app/events/preview/${reqId}`;
-  
-    return `🚀 *मुंबई Event Techies* presents
-A new tech event is being reviewed!
-
-Details under review—share this post and we’ll update soon!
-
-👆 Tap to view status & get notified on approval:
-${previewUrl}
-
-#MumbaiTech #EventTechies #TechCommunity`;
-  };
-
-  const whatsAppMessage = requestId ? generateTemplateMessage(requestId) : "";
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,6 +55,7 @@ ${previewUrl}
 
   const onSubmit = async (data: FormData) => {
     setStatus("loading");
+    setErrorMessage(null);
     try {
         const response = await fetch('/api/submit-url', {
             method: 'POST',
@@ -74,8 +65,11 @@ ${previewUrl}
 
         const result = await response.json();
 
-        if (response.status === 202) {
-            setRequestId(result.requestId);
+        if (response.ok && result.success) {
+            setSuccessState({
+                eventUrl: result.eventUrl,
+                whatsappMessage: result.whatsappMessage
+            });
             setStatus("success");
             setShowConfetti(true);
             setTimeout(() => setShowConfetti(false), 8000);
@@ -84,54 +78,42 @@ ${previewUrl}
         }
     } catch (error) {
         console.error("Submission error:", error);
+        setErrorMessage((error as Error).message || "Could not submit the URL. Please try again.");
         setStatus("error");
-        toast({ title: "Submission Failed", description: "Could not submit the URL. Please try again.", variant: 'destructive' });
+        toast({ title: "Submission Failed", description: (error as Error).message, variant: 'destructive' });
     }
   };
   
   const resetForm = () => {
     setStatus("idle");
-    setRequestId(null);
+    setSuccessState(null);
+    setErrorMessage(null);
   }
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(whatsAppMessage);
-    toast({
-        title: "Copied to clipboard!",
-        description: "WhatsApp message template is ready to be pasted.",
-    });
+    if (successState?.whatsappMessage) {
+        navigator.clipboard.writeText(successState.whatsappMessage);
+        toast({
+            title: "Copied to clipboard!",
+            description: "WhatsApp message template is ready to be pasted.",
+        });
+    }
   }
 
   const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "New Event Submission Template",
-          text: whatsAppMessage,
-        });
-      } else {
-        copyToClipboard();
-        toast({
-            title: "Share Not Supported",
-            description: "Copied to clipboard instead.",
-            variant: "default"
-        });
-      }
-    } catch (error) {
-        if (error instanceof DOMException && error.name === 'NotAllowedError') {
-            copyToClipboard();
-            toast({
-                title: "Sharing Cancelled",
-                description: "Copied to clipboard instead.",
-                variant: "default",
+     if (successState?.whatsappMessage) {
+        try {
+        if (navigator.share) {
+            await navigator.share({
+            title: "New Event on मुंबई Event Techies",
+            text: successState.whatsappMessage,
             });
         } else {
+            copyToClipboard();
+        }
+        } catch (error) {
             console.error("Error sharing:", error);
-            toast({
-                title: "Error",
-                description: "Could not share the template.",
-                variant: "destructive",
-            });
+            copyToClipboard(); // Fallback to copy
         }
     }
   };
@@ -145,7 +127,7 @@ ${previewUrl}
     }
   }
 
-  if (status === 'success') {
+  if (status === 'success' && successState) {
     return (
         <motion.div 
             className="text-center bg-slate-800/50 border border-purple-500/30 rounded-xl p-8 max-w-2xl mx-auto"
@@ -154,14 +136,17 @@ ${previewUrl}
         >
             {showConfetti && <Confetti width={windowSize.width} height={windowSize.height} recycle={false} />}
             <PartyPopper className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Event Submitted! 🎉</h2>
-            <p className="text-slate-300 mb-6">Our admin team will review it. In the meantime, you can share this placeholder link with the community.</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Event Published! 🎉</h2>
+            <p className="text-slate-300 mb-6">The event is now live. Share the good news with the community!</p>
+            <Button asChild>
+                <Link href={successState.eventUrl} target="_blank">View Your Event</Link>
+            </Button>
 
             <div className="my-8 text-left bg-slate-900/70 p-4 rounded-lg border border-slate-700">
-                <h3 className="text-lg font-bold text-white mb-3">Share this placeholder post on WhatsApp:</h3>
+                <h3 className="text-lg font-bold text-white mb-3">Share on WhatsApp:</h3>
                 <div className="bg-white rounded-lg p-3 border shadow-sm">
                     <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
-                        {whatsAppMessage}
+                        {successState.whatsappMessage}
                     </pre>
                 </div>
                  <div className="flex flex-col sm:flex-row gap-2 mt-4">
@@ -246,6 +231,17 @@ ${previewUrl}
           >
             Please enter a valid event URL.
           </motion.p>
+        )}
+        {status === 'error' && errorMessage && (
+            <motion.p
+                className="mt-2 text-sm text-red-400 text-center"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                role="alert"
+            >
+                {errorMessage}
+            </motion.p>
         )}
       </AnimatePresence>
       <p className="text-center mt-8 text-slate-400 text-sm">
