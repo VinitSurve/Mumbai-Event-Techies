@@ -172,7 +172,7 @@ ${websiteUrl}
                 <p className="text-xs text-green-600 mt-2 text-center">
                   This message will be auto-generated once admin approves your event!
                 </p>
-                <div className="flex gap-2 mt-4">
+                <div className="flex flex-col sm:flex-row gap-2 mt-4">
                   <motion.button
                       onClick={copyToClipboard}
                       whileHover={{ scale: 1.05 }}
@@ -206,47 +206,47 @@ ${websiteUrl}
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-      <motion.div 
-        className="relative"
+      <motion.div
+        className="flex flex-col sm:flex-row gap-4 items-center"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-            <AnimatePresence>
-                <motion.div
-                    key={platform}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    className="w-6 h-6"
-                >
-                    {platformIcons[platform]}
-                </motion.div>
-            </AnimatePresence>
+        <div className="relative w-full">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                <AnimatePresence>
+                    <motion.div
+                        key={platform}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        className="w-6 h-6"
+                    >
+                        {platformIcons[platform]}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+            <input
+              {...register("eventUrl", { required: true, validate: isValidUrl })}
+              placeholder="🔗 Paste your event URL here..."
+              className="w-full h-16 pl-12 pr-4 py-2 text-lg text-white bg-slate-800/50 border-2 border-slate-700/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all duration-300 ease-in-out backdrop-blur-sm"
+              aria-invalid={errors.eventUrl ? "true" : "false"}
+            />
         </div>
-        <input
-          {...register("eventUrl", { required: true, validate: isValidUrl })}
-          placeholder="🔗 Paste your event URL here (e.g., meetup.com, lu.ma...)"
-          className="w-full h-16 pl-12 pr-40 py-2 text-lg text-white bg-slate-800/50 border-2 border-slate-700/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all duration-300 ease-in-out backdrop-blur-sm"
-          aria-invalid={errors.eventUrl ? "true" : "false"}
-        />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <motion.button
-              type="submit"
-              disabled={status === "loading"}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-2.5 font-semibold text-white bg-gradient-to-r from-purple-600 to-orange-500 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:from-purple-700 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {renderStatus()}
-            </motion.button>
-        </div>
+        <motion.button
+          type="submit"
+          disabled={status === "loading"}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-full sm:w-auto px-6 py-2.5 h-16 font-semibold text-white bg-gradient-to-r from-purple-600 to-orange-500 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:from-purple-700 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+        >
+          {renderStatus()}
+        </motion.button>
       </motion.div>
       <AnimatePresence>
         {errors.eventUrl && (
           <motion.p 
-            className="mt-2 text-sm text-orange-400" 
+            className="mt-2 text-sm text-orange-400 text-center sm:text-left" 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
