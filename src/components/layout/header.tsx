@@ -11,13 +11,14 @@ const navLinks = [
     { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
     { href: "/calendar", label: "Calendar" },
+    { href: "/submit-event", label: "Submit Event" },
     { href: "/about", label: "About" },
     { href: "/subscribe", label: "Subscribe" },
 ]
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
             <Logo />
