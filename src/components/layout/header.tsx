@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Menu, PlusCircle } from 'lucide-react';
 import { ThemeToggle } from '../theme-toggle';
 import Link from 'next/link';
-import { Sheet, SheetContent, SheetHeader, SheetTrigger, SheetClose } from '../ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '../ui/sheet';
 
 const navLinks = [
     { href: "/", label: "Home" },
@@ -27,7 +27,7 @@ export function Header() {
             ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Button asChild variant="default" className="hidden md:flex">
+          <Button asChild>
             <Link href="/submit-event">
               <PlusCircle className="mr-2 h-4 w-4"/>
               Submit Event
@@ -43,6 +43,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right">
                 <SheetHeader className="border-b pb-4 mb-4">
+                    <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     <Logo />
                 </SheetHeader>
                 <div className="flex flex-col gap-4">
@@ -53,11 +54,6 @@ export function Header() {
                             </Link>
                         </SheetClose>
                     ))}
-                    <SheetClose asChild>
-                       <Link href="/submit-event" className="font-medium text-lg text-primary transition-colors hover:text-primary/80">
-                         Submit Event
-                       </Link>
-                    </SheetClose>
                 </div>
             </SheetContent>
            </Sheet>
