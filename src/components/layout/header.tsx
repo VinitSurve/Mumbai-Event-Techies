@@ -1,9 +1,8 @@
 
 import { Logo } from '@/components/logo';
 import { Button } from '../ui/button';
-import { Menu, Search, X } from 'lucide-react';
+import { Menu, PlusCircle } from 'lucide-react';
 import { ThemeToggle } from '../theme-toggle';
-import { Input } from '../ui/input';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetHeader, SheetTrigger, SheetClose } from '../ui/sheet';
 
@@ -28,6 +27,12 @@ export function Header() {
             ))}
         </nav>
         <div className="flex items-center gap-2">
+          <Button asChild variant="default" className="hidden md:flex">
+            <Link href="/submit-event">
+              <PlusCircle className="mr-2 h-4 w-4"/>
+              Submit Event
+            </Link>
+          </Button>
           <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
@@ -48,6 +53,11 @@ export function Header() {
                             </Link>
                         </SheetClose>
                     ))}
+                    <SheetClose asChild>
+                       <Link href="/submit-event" className="font-medium text-lg text-primary transition-colors hover:text-primary/80">
+                         Submit Event
+                       </Link>
+                    </SheetClose>
                 </div>
             </SheetContent>
            </Sheet>

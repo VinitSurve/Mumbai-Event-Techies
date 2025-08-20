@@ -16,7 +16,7 @@ export function Hero() {
             <Logo light />
         </div>
         <p className="text-lg md:text-xl max-w-3xl mx-auto text-primary-foreground/80 mb-8">
-          Your exclusive gateway to the most exciting tech events in Mumbai, curated by the community for the community.
+          Discover & share Mumbai’s best tech events in one place.
         </p>
         <div className="max-w-xl mx-auto">
           <div className="relative">
