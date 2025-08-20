@@ -1,4 +1,3 @@
-
 // src/components/submit-event/submit-form.tsx
 "use client";
 
@@ -57,7 +56,7 @@ export function SubmitForm() {
     setStatus("loading");
     setErrorMessage(null);
     try {
-        const response = await fetch('/api/submit-url', {
+        const response = await fetch('/api/submit-event', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: data.eventUrl }),

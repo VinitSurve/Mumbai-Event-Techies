@@ -31,7 +31,7 @@ const ExtractEventDetailsOutputSchema = z.object({
   location: z.string().describe('The location of the event.'),
   urls: z.array(z.string().url()).describe('An array of URLs related to the event.'),
   image_url: z.string().url().optional().describe('The URL of an image associated with the event.'),
-  category: z.string().describe('The category of the event (e.g., tech talk, workshop).'),
+  category: z.string().describe('The category of the event (e.g., Tech Talk, Workshop, Conference, Meetup, Hackathon).'),
 });
 
 export type ExtractEventDetailsOutput = z.infer<typeof ExtractEventDetailsOutputSchema>;
