@@ -1,4 +1,4 @@
-{// src/lib/scrapers/index.ts
+{{// src/lib/scrapers/index.ts
 import type { Event } from '@/lib/types';
 import type { BaseScraper } from './base';
 
@@ -11,10 +11,9 @@ import { BevyScraper } from './bevy';
 import { DevfolioScraper } from './devfolio';
 import { DevpostScraper } from './devpost';
 import { GDGScraper } from './gdg';
-// Import other scrapers as they are created
-// import { Hack2SkillScraper } from './hack2skill';
-// import { UnstopScraper } from './unstop';
-// import { IBMScraper } from './ibm';
+import { Hack2SkillScraper } from './hack2skill';
+import { UnstopScraper } from './unstop';
+import { IBMScraper } from './ibm';
 
 
 // Scraper factory to return the appropriate scraper for a given URL
@@ -37,15 +36,13 @@ export const selectScraper = (url: string): BaseScraper => {
             return new DevpostScraper();
         } else if (hostname.includes('gdg.community.dev')) {
            return new GDGScraper();
+        } else if (hostname.includes('hack2skill.com')) {
+          return new Hack2SkillScraper();
+        } else if (hostname.includes('unstop.com')) {
+          return new UnstopScraper();
+        } else if (hostname.includes('ibm.com')) {
+          return new IBMScraper();
         }
-        // Add more scrapers here
-        // else if (hostname.includes('hack2skill.com')) {
-        //   return new Hack2SkillScraper();
-        // } else if (hostname.includes('unstop.com')) {
-        //   return new UnstopScraper();
-        // } else if (hostname.includes('ibm.com')) {
-        //   return new IBMScraper();
-        // }
         else {
             return new GenericScraper();
         }
