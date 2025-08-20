@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { selectScraper } from '@/lib/scrapers';
 import { firestore } from '@/lib/firebase-admin';
 import type { Event } from '@/lib/types';
+import { BaseScraper } from '@/lib/scrapers/base';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
@@ -52,7 +53,7 @@ https://mumbai-event-techies.vercel.app/events/${event.slug}
 
 
 export async function POST(request: Request) {
-  const scraper = selectScraper(''); // Create a scraper instance to manage browser
+  let scraper: BaseScraper | null = null;
   try {
     const body = await request.json();
     const parsed = submitUrlSchema.safeParse(body);
@@ -66,10 +67,10 @@ export async function POST(request: Request) {
     
     console.log(`[${eventId}] Scraping for ${url} initiated.`);
     
-    const specificScraper = selectScraper(url);
+    scraper = selectScraper(url);
     console.log(`[${eventId}] Using scraper for domain: ${new URL(url).hostname}`);
     
-    const scrapedData = await specificScraper.scrape(url);
+    const scrapedData = await scraper.scrape(url);
     console.log(`[${eventId}] Scraping successful.`);
 
     const eventSlug = generateSlug(scrapedData.title || 'event', scrapedData.event_date);
@@ -117,6 +118,9 @@ export async function POST(request: Request) {
     console.error('Error in /api/submit-event:', error);
     return NextResponse.json({ error: 'An unexpected error occurred during scraping.' }, { status: 500 });
   } finally {
-      await scraper.close();
+      if (scraper) {
+        await scraper.close();
+        console.log('Browser closed.');
+      }
   }
 }

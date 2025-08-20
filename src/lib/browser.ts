@@ -5,14 +5,10 @@ import { config } from 'dotenv';
 
 config();
 
-// Browser instance - singleton
 let browser: Browser | null = null;
 
-/**
- * Launch browser if not already launched
- */
 export const launchBrowser = async (): Promise<Browser> => {
-  if (!browser) {
+  if (!browser || !browser.isConnected()) {
     const headless = process.env.HEADLESS !== 'false';
     
     browser = await puppeteer.launch({
@@ -38,11 +34,7 @@ export const launchBrowser = async (): Promise<Browser> => {
   return browser;
 };
 
-/**
- * Create a new browser page with configured settings
- */
-export const createPage = async (): Promise<Page> => {
-  const browserInstance = await launchBrowser();
+export const createPage = async (browserInstance: Browser): Promise<Page> => {
   const page = await browserInstance.newPage();
   
   const navigationTimeout = parseInt(process.env.NAVIGATION_TIMEOUT || '30000', 10);
@@ -91,11 +83,8 @@ export const createPage = async (): Promise<Page> => {
   return page;
 };
 
-/**
- * Close a browser page
- */
 export const closePage = async (page: Page) => {
-  if (page) {
+  if (page && !page.isClosed()) {
     try {
       await page.close();
     } catch (err) {
@@ -104,16 +93,18 @@ export const closePage = async (page: Page) => {
   }
 };
 
-/**
- * Close the browser instance
- */
-export const close = async () => {
-  if (browser) {
-    try {
-      await browser.close();
-      browser = null;
-    } catch (err) {
-      console.error('Error closing browser:', (err as Error).message);
+export const close = async (browserInstance?: Browser) => {
+    const b = browserInstance || browser;
+    if (b) {
+        try {
+        await b.close();
+        if (b === browser) {
+            browser = null;
+        }
+        } catch (err) {
+        console.error('Error closing browser:', (err as Error).message);
+        }
     }
-  }
 };
+
+export type { Browser, Page };

@@ -1,16 +1,17 @@
 // src/lib/scrapers/base.ts
-import { createPage, closePage } from '@/lib/browser';
+import { createPage, closePage, Browser, Page, launchBrowser, close } from '@/lib/browser';
 import { sleep, sanitizeString } from '@/lib/utils';
-import type { Page } from 'puppeteer';
 import type { Event } from '@/lib/types';
 
 
 export class BaseScraper {
   page: Page | null = null;
+  browser: Browser | null = null;
   url: string = '';
 
   async initialize() {
-    this.page = await createPage();
+      this.browser = await launchBrowser();
+      this.page = await createPage(this.browser);
   }
 
   async navigate(url: string, options: object = {}) {
@@ -112,8 +113,12 @@ export class BaseScraper {
 
   async close() {
     if (this.page) {
-        await closePage(this.page);
-        this.page = null;
+      await closePage(this.page);
+      this.page = null;
+    }
+    if (this.browser) {
+      await close(this.browser);
+      this.browser = null;
     }
   }
   
@@ -145,13 +150,13 @@ export class BaseScraper {
     const techTags = this.extractTechTags(eventData.title + ' ' + eventData.description);
     
     return {
-      title: eventData.title || 'Untitled Event',
-      description: eventData.description || '',
-      event_date: eventData.startDate || null,
-      location: eventData.location || null,
+      title: eventData.title || "Untitled Event",
+      description: eventData.description || "",
+      event_date: eventData.event_date || new Date().toISOString(),
+      location: eventData.location || "TBD",
       urls: [url],
       category: category,
-      image_url: eventData.coverImageUrl || eventData.imageUrl || null,
+      image_url: eventData.image_url || null,
     };
   }
   
