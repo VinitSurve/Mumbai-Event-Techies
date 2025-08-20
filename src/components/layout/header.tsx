@@ -10,6 +10,7 @@ const navLinks = [
     { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
     { href: "/calendar", label: "Calendar" },
+    { href: "/notifications", label: "Notifications" },
     { href: "/about", label: "About" },
     { href: "/subscribe", label: "Subscribe" },
 ]
@@ -27,12 +28,6 @@ export function Header() {
             ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Button asChild>
-            <Link href="/submit-event">
-              <PlusCircle className="mr-2 h-4 w-4"/>
-              Submit Event
-            </Link>
-          </Button>
           <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
