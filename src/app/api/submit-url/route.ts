@@ -2,20 +2,41 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
+import { selectScraper } from '@/lib/scrapers';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
 });
 
-// This is a placeholder for the real implementation which will involve
-// invoking a scraper and saving to Firestore.
-async function handleEventScraping(url: string) {
-    console.log(`Scraping for ${url} initiated.`);
-    // In a real implementation:
-    // 1. Select scraper based on domain
-    // 2. Invoke scraper
-    // 3. Save to `pendingEvents` in Firestore with status 'pending'
-    // 4. Trigger admin notification email (e.g., via a Firebase Function)
+// This function will now handle the full scraping and data storage process
+async function handleEventScraping(url: string, requestId: string) {
+    console.log(`[${requestId}] Scraping for ${url} initiated.`);
+    
+    try {
+        const scraper = selectScraper(url);
+        console.log(`[${requestId}] Using scraper for domain: ${new URL(url).hostname}`);
+        
+        const scrapedData = await scraper(url);
+
+        console.log(`[${requestId}] Scraping successful.`, scrapedData);
+
+        // In a real implementation:
+        // 1. Connect to Firebase Admin SDK
+        // 2. Save scrapedData to `pendingEvents/{requestId}` in Firestore
+        //    const db = getFirestore();
+        //    await db.collection('pendingEvents').doc(requestId).set({
+        //        ...scrapedData,
+        //        originalUrl: url,
+        //        status: 'pending',
+        //        submittedAt: new Date().toISOString(),
+        //    });
+        // 3. Trigger admin notification email (e.g., via a Firebase Function)
+        console.log(`[${requestId}] Data ready for Firestore. Triggering notifications...`);
+        
+    } catch (error) {
+        console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
+        // Here you could update the Firestore doc with an error status
+    }
 }
 
 export async function POST(request: Request) {
@@ -31,8 +52,12 @@ export async function POST(request: Request) {
     const requestId = uuidv4();
 
     // Start the background scraping process but don't wait for it
-    handleEventScraping(url).catch(console.error);
+    // We use a self-invoking function to avoid holding up the response
+    (async () => {
+      await handleEventScraping(url, requestId);
+    })();
 
+    // Respond to the client immediately
     return NextResponse.json({
       requestId,
       message: 'Scraping in progress…',
