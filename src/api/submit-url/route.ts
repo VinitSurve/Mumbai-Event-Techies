@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { selectScraper } from '@/lib/scrapers';
 import { close as closeBrowser } from '@/lib/browser';
 import { firestore } from '@/lib/firebase-admin';
-import { sendReviewEmail } from '@/ai/flows/send-review-email';
 import type { Event } from '@/lib/types';
 
 
@@ -35,15 +34,7 @@ async function handleEventScraping(url: string, requestId: string) {
         const db = firestore;
         await db.collection('pendingEvents').doc(requestId).set(pendingEvent);
 
-        console.log(`[${requestId}] Data saved to Firestore. Triggering notifications...`);
-        
-        // Directly call the email sending flow
-        await sendReviewEmail({
-            requestId,
-            event: pendingEvent as Event,
-        });
-
-        console.log(`[${requestId}] Admin notification email triggered.`);
+        console.log(`[${requestId}] Data saved to Firestore. The Firestore trigger will handle the email notification.`);
         
     } catch (error) {
         console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
