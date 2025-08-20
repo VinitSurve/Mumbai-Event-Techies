@@ -36,7 +36,7 @@ export function Hero() {
             <Link href="/events">Latest Events</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-primary">
-            <Link href="/subscribe">Submit an Event</Link>
+            <Link href="/submit-event">Submit an Event</Link>
           </Button>
         </div>
       </div>
