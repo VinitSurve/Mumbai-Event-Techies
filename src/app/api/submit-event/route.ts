@@ -1,3 +1,4 @@
+
 // src/app/api/submit-event/route.ts
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -51,6 +52,7 @@ https://mumbai-event-techies.vercel.app/events/${event.slug}
 
 
 export async function POST(request: Request) {
+  const scraper = selectScraper(''); // Create a scraper instance to manage browser
   try {
     const body = await request.json();
     const parsed = submitUrlSchema.safeParse(body);
@@ -64,10 +66,10 @@ export async function POST(request: Request) {
     
     console.log(`[${eventId}] Scraping for ${url} initiated.`);
     
-    const scraper = selectScraper(url);
+    const specificScraper = selectScraper(url);
     console.log(`[${eventId}] Using scraper for domain: ${new URL(url).hostname}`);
     
-    const scrapedData = await scraper.scrape(url);
+    const scrapedData = await specificScraper.scrape(url);
     console.log(`[${eventId}] Scraping successful.`);
 
     const eventSlug = generateSlug(scrapedData.title || 'event', scrapedData.event_date);
@@ -114,5 +116,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error in /api/submit-event:', error);
     return NextResponse.json({ error: 'An unexpected error occurred during scraping.' }, { status: 500 });
+  } finally {
+      await scraper.close();
   }
 }
