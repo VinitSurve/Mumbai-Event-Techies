@@ -1,10 +1,11 @@
+
 // src/components/submit-event/submit-form.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, Loader2, CheckCircle, AlertCircle, PartyPopper, Clipboard } from "lucide-react";
+import { Link as LinkIcon, Loader2, CheckCircle, AlertCircle, PartyPopper, Clipboard } from "lucide-react";
 import { platformIcons, detectPlatform } from "./platform-icons";
 import Confetti from 'react-confetti';
 import { useToast } from "@/hooks/use-toast";
@@ -37,18 +38,38 @@ export function SubmitForm() {
 
   // Mock event data for template
    const mockEventDetails = {
-    name: "Mumbai Tech Meetup",
-    date: "October 26, 2025",
-    location: "BKC, Mumbai"
-  }
+    title: "OnlyDevs - Solana Developer Gathering",
+    date: "Sat, Oct 4 • 10:00 AM",
+    location: "Sofitel Mumbai BKC"
+  };
 
-  const whatsAppMessage = `*Event Alert from मुंबई Event Techies!* 🚀
+  const generateTemplateMessage = (eventData: typeof mockEventDetails) => {
+    const eventSlug = (eventData.title || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      + '-mumbai-' + new Date().toLocaleString('default', { month: 'short' }).toLowerCase() + '-' + new Date().getFullYear();
+  
+    const websiteUrl = `https://mumbai-event-techies.vercel.app/events/${eventSlug}`;
+  
+    return `🚀 *मुंबई Event Techies* presents
 
-*Event:* ${mockEventDetails.name}
-*Date:* ${mockEventDetails.date}
-*Location:* ${mockEventDetails.location}
+*${eventData.title}*
 
-Stay tuned for the registration link!`;
+📅 ${eventData.date}
+📍 ${eventData.location}
+
+Curated by मुंबई Event Techies community for Mumbai's tech enthusiasts! 
+
+👆 Tap to view full details, register & connect with fellow developers
+
+${websiteUrl}
+
+#MumbaiTech #EventTechies #TechCommunity`;
+  };
+
+  const whatsAppMessage = generateTemplateMessage(mockEventDetails);
 
 
   useEffect(() => {
@@ -110,14 +131,19 @@ Stay tuned for the registration link!`;
 
             <div className="my-8 text-left bg-slate-900/70 p-4 rounded-lg border border-slate-700">
                 <h3 className="text-lg font-bold text-white mb-3">WhatsApp Post Template</h3>
-                <pre className="text-slate-300 text-sm whitespace-pre-wrap font-sans mb-4 p-3 bg-slate-800 rounded-md">
-                    {whatsAppMessage}
-                </pre>
+                <div className="bg-white rounded-lg p-3 border shadow-sm">
+                    <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
+                        {whatsAppMessage}
+                    </pre>
+                </div>
+                <p className="text-xs text-green-600 mt-2 text-center">
+                  This message will be auto-generated once admin approves your event!
+                </p>
                 <motion.button
                     onClick={copyToClipboard}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                     <Clipboard className="w-4 h-4" /> Copy Template
                 </motion.button>
