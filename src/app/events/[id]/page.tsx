@@ -1,4 +1,7 @@
+
 // src/app/events/[id]/page.tsx
+"use client";
+
 import * as React from "react";
 import { mockEvents } from "@/lib/data";
 import type { Event } from "@/lib/types";
@@ -6,16 +9,18 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { notFound } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Share2, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { EventCard } from "@/components/event-card";
+import { useToast } from "@/hooks/use-toast";
 
-// Note: This is now an async Server Component
-export default async function EventDetailPage({ params }: { params: { id: string } }) {
+export default function EventDetailPage({ params }: { params: { id: string } }) {
     const { id } = params;
+    const { toast } = useToast();
+    const pathname = usePathname();
     
     const event = mockEvents.find((e) => e.id === id);
 
@@ -37,6 +42,32 @@ export default async function EventDetailPage({ params }: { params: { id: string
         minute: '2-digit',
         hour12: true
     });
+    
+    const handleShare = async () => {
+        const shareData = {
+            title: event.title,
+            text: `Check out this event: ${event.title}`,
+            url: window.location.origin + pathname,
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(shareData.url);
+                toast({
+                    title: "Link Copied!",
+                    description: "Event link copied to your clipboard.",
+                });
+            }
+        } catch (error) {
+            console.error("Error sharing:", error);
+            toast({
+                title: "Error",
+                description: "Could not share the event.",
+                variant: "destructive",
+            });
+        }
+    };
 
     return (
         <div className="flex flex-col min-h-screen bg-secondary/30">
@@ -76,7 +107,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
                             </div>
                             <div className="flex-shrink-0 flex flex-col gap-3 w-full md:w-auto mt-4 md:mt-0">
                                 <Button size="lg" className="w-full bg-accent hover:bg-accent/90">Register Now</Button>
-                                <Button size="lg" variant="outline" className="w-full">
+                                <Button size="lg" variant="outline" className="w-full" onClick={handleShare}>
                                     <Share2 className="mr-2 h-5 w-5" /> Share
                                 </Button>
                             </div>
