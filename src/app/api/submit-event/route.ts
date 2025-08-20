@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { selectScraper } from '@/lib/scrapers';
-import { close as closeBrowser } from '@/lib/browser';
 import { firestore } from '@/lib/firebase-admin';
 import type { Event } from '@/lib/types';
 
@@ -100,8 +99,6 @@ export async function POST(request: Request) {
     const db = firestore;
     await db.collection('events').doc(eventId).set(finalEvent);
     console.log(`[${eventId}] Event data saved to Firestore.`);
-
-    await closeBrowser(); 
     
     const whatsappMessage = generateWhatsAppMessage(finalEvent);
 
@@ -116,7 +113,6 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Error in /api/submit-event:', error);
-    await closeBrowser();
     return NextResponse.json({ error: 'An unexpected error occurred during scraping.' }, { status: 500 });
   }
 }
