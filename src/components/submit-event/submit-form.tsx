@@ -115,19 +115,29 @@ ${websiteUrl}
           text: whatsAppMessage,
         });
       } else {
+        copyToClipboard();
         toast({
             title: "Share Not Supported",
-            description: "Your browser does not support the Web Share API. Use the copy button instead.",
-            variant: "destructive"
+            description: "Copied to clipboard instead.",
+            variant: "default"
         });
       }
     } catch (error) {
-        console.error("Error sharing:", error);
-        toast({
-            title: "Error",
-            description: "Could not share the template.",
-            variant: "destructive",
-        });
+        if (error instanceof DOMException && error.name === 'NotAllowedError') {
+            copyToClipboard();
+            toast({
+                title: "Sharing Cancelled",
+                description: "Copied to clipboard instead.",
+                variant: "default",
+            });
+        } else {
+            console.error("Error sharing:", error);
+            toast({
+                title: "Error",
+                description: "Could not share the template.",
+                variant: "destructive",
+            });
+        }
     }
   };
 
