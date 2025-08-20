@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { selectScraper } from '@/lib/scrapers';
+import { createPage, closePage, close as closeBrowser } from '@/lib/browser';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
@@ -12,11 +13,14 @@ const submitUrlSchema = z.object({
 async function handleEventScraping(url: string, requestId: string) {
     console.log(`[${requestId}] Scraping for ${url} initiated.`);
     
+    let page;
     try {
         const scraper = selectScraper(url);
+        
         console.log(`[${requestId}] Using scraper for domain: ${new URL(url).hostname}`);
         
-        const scrapedData = await scraper(url);
+        page = await createPage();
+        const scrapedData = await scraper.scrape(page, url);
 
         console.log(`[${requestId}] Scraping successful.`, scrapedData);
 
@@ -36,6 +40,13 @@ async function handleEventScraping(url: string, requestId: string) {
     } catch (error) {
         console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
         // Here you could update the Firestore doc with an error status
+    } finally {
+        if (page) {
+            await closePage(page);
+        }
+        // Consider when to close the browser. Maybe after a period of inactivity.
+        // For a serverless function, you'd close it after each invocation.
+        // await closeBrowser(); 
     }
 }
 
