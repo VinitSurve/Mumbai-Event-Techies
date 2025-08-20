@@ -10,22 +10,8 @@ import { Check, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { notFound, useParams, useSearchParams } from 'next/navigation';
 import type { Event } from '@/lib/types';
-import { mockEvents } from '@/lib/data'; // Using mock for now
-
-
-// This will be replaced with a fetch from Firestore for the actual pending event
-const fetchPendingEvent = async (id: string): Promise<Event | null> => {
-    console.log(`Fetching pending event: ${id}`);
-    // Simulate API delay
-    await new Promise(res => setTimeout(res, 500));
-    // Find a mock event to simulate a pending one
-    const event = mockEvents.find(e => e.id === id) || mockEvents[0];
-    if (event) {
-        return { ...event, id, status: 'upcoming' }; // return a mock event as pending
-    }
-    return null;
-};
-
+import { doc, getDoc } from 'firebase/firestore';
+import { firestore } from '@/lib/firebase'; // Note: Using client-side firebase instance
 
 export default function AdminReviewPage() {
     const params = useParams();
@@ -42,7 +28,8 @@ export default function AdminReviewPage() {
     React.useEffect(() => {
         // In a real app, this key would be checked on the server-side.
         // This is a simplified client-side check for prototyping.
-        if (adminKey && adminKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
+        // NOTE: NEXT_PUBLIC_ is needed to expose env var to the client.
+        if (adminKey && adminKey === (process.env.NEXT_PUBLIC_ADMIN_KEY || "SUPER_SECRET_ADMIN_KEY")) {
             setIsAuthorized(true);
         } else {
             setIsAuthorized(false);
@@ -52,19 +39,25 @@ export default function AdminReviewPage() {
 
     React.useEffect(() => {
         if (isAuthorized && id) {
-            fetchPendingEvent(id)
-                .then(data => {
-                    if (data) {
-                        setEvent(data);
+            const fetchPendingEvent = async () => {
+                try {
+                    const eventDocRef = doc(firestore, 'pendingEvents', id);
+                    const eventDoc = await getDoc(eventDocRef);
+
+                    if (eventDoc.exists()) {
+                        setEvent({ id: eventDoc.id, ...eventDoc.data() } as Event);
                     } else {
-                        toast({ title: "Event not found", variant: "destructive" });
+                        toast({ title: "Event not found", description: `No pending event with ID: ${id}`, variant: "destructive" });
                     }
-                })
-                .catch(err => {
-                    console.error(err);
-                    toast({ title: "Failed to fetch event", variant: "destructive" });
-                })
-                .finally(() => setLoading(false));
+                } catch (err) {
+                    console.error("Firestore error:", err);
+                    toast({ title: "Failed to fetch event", description: (err as Error).message, variant: "destructive" });
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchPendingEvent();
         }
     }, [id, isAuthorized, toast]);
 
@@ -86,7 +79,13 @@ export default function AdminReviewPage() {
     }
 
     if (!event) {
-        notFound();
+        // Instead of notFound(), show a message, as it might still be loading or just not found.
+        return (
+             <div className="flex flex-col min-h-screen bg-secondary/30 text-center py-20">
+                <h1 className="text-3xl font-bold">Event Not Found</h1>
+                <p className="text-muted-foreground mt-2">Could not find a pending event with the specified ID.</p>
+            </div>
+        )
     }
 
     const handleAction = async (action: 'approve' | 'reject') => {
@@ -122,12 +121,12 @@ export default function AdminReviewPage() {
                             </div>
                             <div>
                                 <h3 className="font-semibold text-lg">Description</h3>
-                                <p className="text-muted-foreground">{event.description}</p>
+                                <p className="text-muted-foreground whitespace-pre-wrap">{event.description}</p>
                             </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <h3 className="font-semibold text-lg">Date & Time</h3>
-                                    <p className="text-muted-foreground">{new Date(event.event_date).toLocaleString()}</p>
+                                    <p className="text-muted-foreground">{event.event_date ? new Date(event.event_date).toLocaleString() : 'N/A'}</p>
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-lg">Location</h3>
@@ -139,7 +138,7 @@ export default function AdminReviewPage() {
                                 </div>
                                  <div>
                                     <h3 className="font-semibold text-lg">Source URL</h3>
-                                    <a href={event.urls?.[0]} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{event.urls?.[0]}</a>
+                                    <a href={event.originalUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{event.originalUrl}</a>
                                 </div>
                             </div>
                            

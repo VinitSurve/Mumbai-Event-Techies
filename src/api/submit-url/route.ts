@@ -6,7 +6,7 @@ import { selectScraper } from '@/lib/scrapers';
 import { close as closeBrowser } from '@/lib/browser';
 import { firestore } from '@/lib/firebase-admin';
 import type { Event } from '@/lib/types';
-
+import { sendReviewEmail } from '@/ai/flows/send-review-email';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
@@ -17,11 +17,9 @@ async function handleEventScraping(url: string, requestId: string) {
     
     try {
         const scraper = selectScraper(url);
-        
         console.log(`[${requestId}] Using scraper for domain: ${new URL(url).hostname}`);
         
         const scrapedData = await scraper.scrape(url);
-
         console.log(`[${requestId}] Scraping successful.`);
 
         const pendingEvent: Partial<Event> & { originalUrl: string, status: string, submittedAt: string } = {
@@ -33,12 +31,14 @@ async function handleEventScraping(url: string, requestId: string) {
         
         const db = firestore;
         await db.collection('pendingEvents').doc(requestId).set(pendingEvent);
+        console.log(`[${requestId}] Data saved to Firestore.`);
 
-        console.log(`[${requestId}] Data saved to Firestore. The Firestore trigger will handle the email notification.`);
+        // After saving, trigger the admin notification email
+        await sendReviewEmail({ requestId, event: pendingEvent });
+        console.log(`[${requestId}] Admin review email flow triggered.`);
         
     } catch (error) {
         console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
-        // Here you could update the Firestore doc with an error status
         try {
             await firestore.collection('pendingEvents').doc(requestId).set({
                 originalUrl: url,
