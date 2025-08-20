@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { selectScraper } from '@/lib/scrapers';
 import { close as closeBrowser } from '@/lib/browser';
+import { firestore } from '@/lib/firebase-admin';
 
 const submitUrlSchema = z.object({
   url: z.string().url({ message: 'Invalid URL provided.' }),
@@ -17,30 +18,36 @@ async function handleEventScraping(url: string, requestId: string) {
         
         console.log(`[${requestId}] Using scraper for domain: ${new URL(url).hostname}`);
         
-        // The scraper's scrape method will handle page creation and closing
         const scrapedData = await scraper.scrape(url);
 
         console.log(`[${requestId}] Scraping successful.`, scrapedData);
 
-        // In a real implementation:
-        // 1. Connect to Firebase Admin SDK
-        // 2. Save scrapedData to `pendingEvents/{requestId}` in Firestore
-        //    const db = getFirestore();
-        //    await db.collection('pendingEvents').doc(requestId).set({
-        //        ...scrapedData,
-        //        originalUrl: url,
-        //        status: 'pending',
-        //        submittedAt: new Date().toISOString(),
-        //    });
-        // 3. Trigger admin notification email (e.g., via a Firebase Function)
-        console.log(`[${requestId}] Data ready for Firestore. Triggering notifications...`);
+        // Save scrapedData to `pendingEvents/{requestId}` in Firestore
+        const db = firestore;
+        await db.collection('pendingEvents').doc(requestId).set({
+            ...scrapedData,
+            originalUrl: url,
+            status: 'pending',
+            submittedAt: new Date().toISOString(),
+        });
+
+        // TODO: Trigger admin notification email (e.g., via a Firebase Function)
+        console.log(`[${requestId}] Data saved to Firestore. Triggering notifications...`);
         
     } catch (error) {
         console.error(`[${requestId}] Error during scraping process for ${url}:`, error);
         // Here you could update the Firestore doc with an error status
+        try {
+            await firestore.collection('pendingEvents').doc(requestId).set({
+                originalUrl: url,
+                status: 'error',
+                error: (error as Error).message,
+                submittedAt: new Date().toISOString(),
+            });
+        } catch (dbError) {
+            console.error(`[${requestId}] Failed to write error status to Firestore:`, dbError);
+        }
     } finally {
-        // Consider when to close the browser. Maybe after a period of inactivity.
-        // For a serverless function, you'd close it after each invocation.
         await closeBrowser(); 
     }
 }
