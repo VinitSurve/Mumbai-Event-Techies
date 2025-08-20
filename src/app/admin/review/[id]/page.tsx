@@ -15,6 +15,10 @@ import { app } from '@/lib/firebase'; // Note: Using client-side firebase instan
 
 const firestore = getFirestore(app);
 
+interface PageProps {
+  params: { id: string };
+}
+
 export default function AdminReviewPage() {
     const params = useParams();
     const searchParams = useSearchParams();
