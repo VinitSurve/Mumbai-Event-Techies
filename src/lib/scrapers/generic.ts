@@ -1,4 +1,4 @@
-{// src/lib/scrapers/generic.ts
+// src/lib/scrapers/generic.ts
 import moment from 'moment';
 import axios from 'axios';
 import cheerio from 'cheerio';
