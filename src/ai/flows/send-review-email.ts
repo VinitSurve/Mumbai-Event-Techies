@@ -31,7 +31,7 @@ const sendReviewEmailFlow = ai.defineFlow(
     const { requestId, event } = input;
     
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'vnvint67@gmail.com';
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'vnvinit67@gmail.com';
     const REVIEW_URL_BASE = process.env.REVIEW_URL_BASE || 'https://mumbai-event-techies.vercel.app/admin/review';
 
     if (!SENDGRID_API_KEY) {
